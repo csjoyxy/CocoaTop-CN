@@ -45,7 +45,7 @@ jobs:
       run: |
         curl -LO https://github.com/xybp888/iOS-SDKs/archive/master.zip
         TMP=$(mktemp -d)
-        unzip -q master.zip -d $TMP
+        unzip -o -q master.zip -d $TMP
         mkdir -p "${{ github.workspace }}/theos/sdks"
         mv $TMP/iOS-SDKs-master/*.sdk "${{ github.workspace }}/theos/sdks"
         rm -r master.zip $TMP
