@@ -19,92 +19,58 @@
 		<h1>The Story</h1>
 		<panel>
 		<fieldset>
-		<p>Hello, friends!</p>
-		<p>This text should clarify some questionable concepts implemented in CocoaTop, the ideas behind those concepts,
-		and the idea behind the application itself. Also, it should be a fun read, at least for some ;)</p>
-		<p>Before we begin I would like to thank Luis Finke for making miniCode <a href="cydia://package/com.brokenphysics.miniCode">
-		(available in Cydia)</a> &ndash; a nice alternative to XCode that became an IDE for my first iOS app, which is also my first 
-		Objective C app. (Hey, if you think I typed the whole thing on the iPad, you're wrong. I even used 
-		<a href="cydia://package/net.howett.Theos">Theos</a>, goddamit, okay! But that's not the point!</p>
-		<p class=note>Update: One of the most controversial topics concerning CocoaTop was the icon ;) . The original one, which I drew myself rather 
-		hastily, became the target of criticism on almost every forum or blog, not excluding Chinese, Korean, or some Hindu ones. 
-		That's when <a href="http://twitter.com/dylanduff3">@DylanDuff3</a> kindly offered me his own version of the icon, which is 
-		used currently.</p>
-		<p>Now, you could say that the purpose of CocoaTop is to replace the original terminal '<a href="cydia://package/top">top</a>' 
-		&ndash; but it is not. First of all, the UNIX terminal is a thing in itself: every iPad user has to have a terminal 
-		installed, otherwise (s)he can be mistaken for a dork, or worse &ndash; a humanitarian. Also, 'top' executed on an iPad 
-		always attracts people's attention. So the idea behind CocoaTop is this: I wanted to create something nice, 
-		gaining knowledge in the process. If you find it useful, well, you're in luck!</p>
-		<p>While working on CocoaTop I found <a href="http://newosxbook.com/index.php">a book, a site, 
-		and a forum</a> by a man named Jonathan Levin. I don't know how I managed to overlook this hilarious stuff. It gave me 
-		a great inspiration boost, not to mention loads of bad-quality source code to ponder on. Thanks to Jonathan's in-depth 
-		coverage of hidden and undocumented APIs this version of CocoaTop features real-time per-process network statistics! 
-		Also, if you're into console utilities &amp; SSH, try his <a href="http://newosxbook.com/tools/procexp.html">Process 
-		Explorer</a> for iOS and Mac OS X.</p>
-		<p>Ok, on to the fun facts:</p>
-		<p>&#x2605; CPU usage sums up not to 100% but to cores&times;100%. Moreover, it can actually exceed this value, and it surely 
-		will when the cores are doing the real stuff: protein folding and shit like that. CPU exceeds 100% not for your amusement, 
-		but due to a scheduling policy of the Mach Kernel, which is called decay-usage scheduling. When a thread acquires CPU 
-		time, its priority is continually being depressed: this ensures short response times of interactive jobs, which 
-		do not always have a high initial priority, especially on weaker mobile platforms. The decayed CPU usage of a running 
-		thread increases in a linearly proportional fashion with CPU time obtained, and is periodically divided by the decay 
-		factor, which is a constant larger than one. Thus, the Mach CPU utilization of the process is a decaying average over 
-		up to a minute of previous (real) time. Since the time base over which this is computed varies (since processes may be 
-		very young) it is possible for the sum of all %CPU fields to exceed 100%. And this is why Android sucks. Also, because 
-		of Java, which isn't bad by itself, but... the mobile world?</p>
-		<p class=note>Update: You may have noticed that on older versions of CocoaTop the kernel task (pid 0) took 
-		up a lot of %CPU, in fact it took up all unused CPU power. This is because for every CPU core there's a kernel thread which 
-		halts the core when it's not used to save battery life, effectively eating up remaining CPU cycles. You can actually find 
-		these threads when you switch to process details, thread mode: they will have a small 'i' for 'idle' in the state column. 
-		Newer versions of CocoaTop no longer include there threads in kernel CPU usage. Unfortunately, on 64-bit devices information 
-		on kernel threads is substantially limited.</p>
-		<p>&#x2605; Everyone knows about processes, but what about Mach tasks? These are actually different things. In fact, it is 
-		technically possible to create a Mach task without a BSD process. A Mach task can actually be created without threads 
-		and memory (ah, the benefits of The Microkernel, my love). Mach tasks do not have parent-child relationships, those are 
-		implemented at the BSD level. This implies that BSD (or, generally, POSIX) has more morale, but not really. In UNIX, it 
-		is actually the norm for the parent to outlive its children. Furthermore, a parent actually expects their children to die, 
-		otherwise they rise as zombies. This is why I love pure microkernels.</p>
-		<p class=note>Update: A barebone task cannot be created in iOS usermode, because the corresponding API task_create() 
-		is removed. But the underlying kernel function task_create_internal() still exists and creates a task 
-		when a BSD process is launched.</p>
-		<p>&#x2605; You can kill processes by swiping to the left, but this seems cruel. One thing I would really prefer is killing 
-		zombies, but not sure if that fits with the iOS philosophy.</p>
-		<p class=note>Update: Actually, a zombie is not a process, but rather just a kernel entry for a process which no longer exists. 
-		So you can't kill it. The only reason for keeping it is to remind a parent process of a child's previous existence and save 
-		any bits of data left over by the child, i.e. an exit code. When the parent process finally collects these data (or dies), 
-		the zombie disappears.</p>
-		<p>&#x2605; There's no such thing as a running process, because it is the threads that run, not processes. So why is there a 
-		'Process running' state? Well, this is done to simplify the output, and actually taken from the original 'top' source 
-		code. Most process states are calculated from thread states using a simple rule of precedence: i.e. if at least one thread 
-		is running, the process state is presumed 'R', and so on. The complete list is provided in the column info: 
-		just tap (i) at the 'Process state' item while managing columns.</p>
-		<p>&#x2605; There is also a column called 'Mach Actual Threads Priority'. What it actually contains is the highest priority of 
-		a thread within the process. This is also the way original 'top' works. Also, there are several scheduling schemes 
-		supported by Mach, but only one of them is actually used in iOS &ndash; 'Time Sharing'. The other two, 'Round-Robin' 
-		and 'FIFO', will be marked in this column using prefixes R: and F: respectively, but I've never seen them. I added 
-		those marks out of curiosity - write me a letter.</p>
-		<p class=note>Update: Round-robin scheduling is actually used for certain threads throughout the OS, especially kernel threads. 
-		In fact, all kernel threads default to the round-robin scheme: see for yourself! (If you're lucky to see kernel task details)</p>
-		<p>&#x2605; Apple tightens up security with each new version of iOS, so CocoaTop can no longer show details about task 0 
-		(the kernel task) on iOS&nbsp;8. You can still enjoy this data if you have iOS&nbsp;7! Actually, the iOS could be considered the 
-		most secure public platform of all times, only if it wasn't so stuffed with backdoors, at least in v.7 ;) Anyway, 
-		it's better than the other non-evil company ;)</p>
-		<p class=note>Update: It seems that details about the kernel task are available on some platforms, while absent on others. 
-		Maybe this depends on the jailbreak method used. I'm glad to inform you that this info is once more available on some devices 
-		running iOS&nbsp;9!</p>
-		<p>&#x2605; There's a 'Mach Task Role' column which actually shows the assigned role for GUI apps, like in OS&nbsp;X. I've noticed 
-		this works only on iOS&nbsp;8+.</p>
+		<p>朋友们，大家好！</p>
+		<p>这篇文章旨在解释 CocoaTop 中实现的一些耐人寻味的概念、这些概念背后的思考，以及应用本身的初衷。同时，至少对某些人来说，这也是一篇有趣的读物 ;)</p>
+		<p>在开始之前，我想感谢 Luis Finke 制作了 miniCode <a href="cydia://package/com.brokenphysics.miniCode">
+		（可在 Cydia 中获取）</a> &ndash; 一个极佳的 Xcode 替代品，它成为了我第一个 iOS 应用（也是我第一个 
+		Objective C 应用）的集成开发环境。（嘿，如果你以为我是在 iPad 上纯手打完所有的代码，那你就错了。我甚至还用了 
+		<a href="cydia://package/net.howett.Theos">Theos</a>，见鬼，好吧！但这并不是重点！）</p>
+		<p class=note>更新：围绕 CocoaTop 最具争议的话题之一就是图标 ;) 。最初那个由我匆匆绘制的图标，几乎在每个论坛和博客上都沦为了批评的目标，
+		中文、韩文甚至一些印度论坛概莫能外。正在那时，<a href="http://twitter.com/dylanduff3">@DylanDuff3</a> 慷慨地为我提供了他自己设计的图标版本，
+		也就是现在所使用的这个。</p>
+		<p>现在，你可能会说 CocoaTop 的目的是替代原本的终端“<a href="cydia://package/top">top</a>” 
+		&ndash; 但事实并非如此。首先，UNIX 终端本身就是一种信仰：每个 iPad 用户都必须安装一个终端，
+		否则就有可能被误认为是个呆子，或者更糟 &ndash; 搞文科的。而且，在 iPad 上运行“top” 
+		总是能吸引人们的目光。因此 CocoaTop 背后的初衷其实是：我想创造一些美好精致的东西，
+		并在此过程中收获知识。如果你觉得它好用，那就太棒了！</p>
+		<p>在开发 CocoaTop 期间，我发现了一个叫 Jonathan Levin 的人写的<a href="http://newosxbook.com/index.php">一本书、一个网站和一个论坛</a>。我真不知道自己之前怎么会错过这么精彩的东西。它给了我 
+		极大的灵感启发，更不用说那些值得深思的海量糟糕源码了。多亏了 Jonathan 对隐藏和未公开 API 的深入讲解，这个版本的 CocoaTop 才得以实现实时的单进程网络统计！
+		另外，如果你喜欢控制台工具和 SSH，不妨试试他为 iOS 和 Mac OS X 开发的 <a href="http://newosxbook.com/tools/procexp.html">Process 
+		Explorer</a>。</p>
+		<p>好了，接下来聊聊有趣的硬核事实：</p>
+		<p>&#x2605; CPU 使用率相加的总和不是 100%，而是核心数&times;100%。不仅如此，它甚至可以超过这个数值，而且当核心在全力做正经事（比如蛋白质折叠之类的重活）时，肯定会超过。CPU 超过 100% 并不是为了逗你开心，
+		而是源于 Mach 内核的一种调度策略，称为衰减使用率调度（decay-usage scheduling）。当一个线程获得 CPU 
+		时间时，它的优先级会不断被调低：这保证了交互式任务能有极短的响应时间，因为交互式任务并不总是有很高的初始优先级，尤其是在性能较弱的移动平台上。运行中线程的衰减 CPU 使用率与获得的 CPU 时间成线性正比增加，并定期除以衰减因子（一个大于 1 的常数）。因此，进程的 Mach CPU 利用率是过去一分钟内（实际）时间的衰减平均值。由于计算的时间基准各不相同（因为进程可能是刚刚创建的），所有 %CPU 字段的总和就有可能超过 100%。这也是为什么安卓很逊的原因。另外还有 Java 的原因，Java 本身并不差，但是……放在移动端？</p>
+		<p class=note>更新：你可能已经注意到，在旧版 CocoaTop 中，kernel task（pid 0）占用了大量的 %CPU，事实上它吃光了所有未使用的 CPU 算力。这是因为每个 CPU 核心都有一个内核线程，
+		在核心不用时将其暂停以节省电池电量，从而实际上占满了剩余的 CPU 周期。当你切换到进程详情的线程模式时，实际上可以找到这些线程：它们在状态列中会显示一个表示“空闲（idle）”的小写“i”。
+		新版 CocoaTop 不再将这些线程计入内核 CPU 使用率中。遗憾的是，在 64 位设备上，获取内核线程信息受到了很大的限制。</p>
+		<p>&#x2605; 大家都了解进程，但 Mach task 又是什么呢？它们其实是截然不同的东西。事实上，技术上完全可以在没有 BSD 进程的情况下创建一个 Mach task。Mach task 甚至可以在没有线程和内存的情况下被创建（啊，微内核的优美之处，我的最爱）。Mach task 没有父子关系，这种关系是在 BSD 层实现的。这仿佛意味着 BSD（或者更广泛地说，POSIX）更有道德伦理，但其实不然。在 UNIX 中，父进程比子进程活得更久反而是常态。而且，父进程实际上时刻盼着子进程死去，否则它们就会变成僵尸进程（zombie）。这也是我深爱纯微内核的原因。</p>
+		<p class=note>更新：在 iOS 用户态下无法创建极简 task，因为对应的 API task_create() 
+		已被移除。但是底层的内核函数 task_create_internal() 依然存在，并在启动 BSD 进程时创建一个 task。</p>
+		<p>&#x2605; 你可以通过向左滑动来终止进程，但这看起来有点残忍。我真正想干的是消灭僵尸进程，但不知道这是否符合 iOS 的设计哲学。</p>
+		<p class=note>更新：其实，僵尸进程并不是一个真正的进程，而只是内核中针对一个已不存在进程的记录项。
+		所以你无法杀死它。保留它的唯一原因是为了提醒父进程该子进程曾经存在过，并保存子进程留下的所有零碎数据，比如退出状态码。当父进程最终读取了这些数据（或者父进程自身死亡）时，
+		僵尸进程就会消失。</p>
+		<p>&#x2605; 根本不存在正在运行的“进程”这种东西，因为真正在跑的是线程，而不是进程。那么为什么会有一个“进程正在运行”的状态呢？嗯，这样做是为了简化输出展示，而且这实际上是直接沿用了原版“top”的源码实现。大多数进程状态都是根据线程状态按照简单的优先级规则推算出来的：也就是说，如果至少有一个线程在运行，进程状态就被认定为“R”，以此类推。完整的状态列表可以在列说明中查看：只需在列管理界面中轻点“Process state”项旁边的 (i) 即可。</p>
+		<p>&#x2605; 还有一列叫作“Mach Actual Threads Priority”。它实际包含的是进程内线程的最高优先级。原版“top”也是这样工作的。此外，Mach 支持多种调度机制，但在 iOS 中实际只使用了其中一种 &ndash; “时间片轮转（Time Sharing）”。另外两种机制“Round-Robin”和“FIFO”如果在这一列中出现，将分别以前缀 R: 和 F: 标出，但我从未见过它们。我出于好奇加上了这些标记 - 欢迎给我写信。</p>
+		<p class=note>更新：Round-robin 轮转调度实际上在整个系统中被某些特定线程所使用，尤其是内核线程。
+		事实上，所有内核线程默认都采用轮转机制：不信你可以自己去看看！（如果你有幸能查看到 kernel task 详情的话）</p>
+		<p>&#x2605; 苹果在每个 iOS 新版本中都在不断收紧安全性，因此在 iOS&nbsp;8 上 CocoaTop 已无法再显示 task 0 
+		（kernel task）的详情。如果你还在用 iOS&nbsp;7，你仍然可以享受到这些数据！其实，要是 iOS 没有塞满后门的话（至少在 v.7 中是这样 ;) ），它完全可以被称作有史以来最安全的公开平台。不过话说回来，总比另一家“不作恶”的公司好多了 ;)</p>
+		<p class=note>更新：看来有关 kernel task 的详情在某些平台上可用，而在另一些平台上不可用。
+		这可能取决于所使用的越狱方式。我很高兴地通知大家，在运行 iOS&nbsp;9 的某些设备上，这项信息又重新可以查看了！</p>
+		<p>&#x2605; 还有一个“Mach Task Role”列，它实际上显示的是为图形界面应用分配的角色，就像在 OS&nbsp;X 中那样。我注意到这只在 iOS&nbsp;8+ 上有效。</p>
 		</fieldset>
 		</panel>
 		<panel>
 			<fieldset>
-				<a class="button" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CSFS43BNNZYV6">Donate via PayPal, if you like this stuff</a>
+				<a class="button" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CSFS43BNNZYV6">如果喜欢这个项目，欢迎通过 PayPal 赞助</a>
 			</fieldset>
 			<fieldset>
-				<a class="button" href="mailto:domo@rambler.r?subject=CocoaTop feedback">Email for feedback and suggestions</a>
+				<a class="button" href="mailto:domo@rambler.r?subject=CocoaTop feedback">发送邮件反馈与建议</a>
 			</fieldset>
 			<fieldset>
-				<a class="button" href="https://www.reddit.com/r/jailbreak/search?q=CocoaTop&restrict_sr=on">CocoaTop on Reddit</a>
+				<a class="button" href="https://www.reddit.com/r/jailbreak/search?q=CocoaTop&restrict_sr=on">Reddit 上的 CocoaTop 讨论</a>
 			</fieldset>
 		</panel>
 	</body>

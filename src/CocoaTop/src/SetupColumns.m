@@ -29,74 +29,74 @@ static NSArray *presetNames;
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
 #if 0
 			presetList = @{
-				@"1: Standard":@[@0, @1, @3, @5, @20, @6, @7],
-				@"2: Inspector":@[@0, @3, @5, @6, @7, @9, @12],
-				@"3: Performance":@[@0, @3, @16, @4, @5, @17, @7, @12],
-				@"4: Minimalistic":@[@0, @3, @7],
-				@"5: Mach-obsessed":@[@0, @3, @12, @13, @15, @14, @21, @22],
-				@"6: RAM usage":@[@0, @1, @7, @23, @24, @8],
-				@"7: Net usage":@[@0, @1, @33, @42, @43, @44, @45],
+				@"1: 标准":@[@0, @1, @3, @5, @20, @6, @7],
+				@"2: 检查器":@[@0, @3, @5, @6, @7, @9, @12],
+				@"3: 性能":@[@0, @3, @16, @4, @5, @17, @7, @12],
+				@"4: 极简":@[@0, @3, @7],
+				@"5: Mach 专注":@[@0, @3, @12, @13, @15, @14, @21, @22],
+				@"6: 内存占用":@[@0, @1, @7, @23, @24, @8],
+				@"7: 网络使用":@[@0, @1, @33, @42, @43, @44, @45],
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
-				@"8: Disk usage":@[@0, @1, @25, @26, @27, @28],
+				@"8: 磁盘使用":@[@0, @1, @25, @26, @27, @28],
 #endif
 			};
 #endif
             if (@available(iOS 7, *)) {
                 presetList = @{
-                                @"1: Standard":@[@0, @1, @3, @5, @20, @6, @7],
-                                @"2: Inspector":@[@0, @3, @5, @6, @7, @9, @12],
-                                @"3: Performance":@[@0, @3, @16, @4, @5, @17, @7, @12],
-                                @"4: Minimalistic":@[@0, @3, @7],
-                                @"5: Mach-obsessed":@[@0, @3, @12, @13, @15, @14, @21, @22],
-                                @"6: RAM usage":@[@0, @1, @7, @23, @24, @8],
-                                @"7: Net usage":@[@0, @1, @33, @42, @43, @44, @45],
-                                @"8: Disk usage":@[@0, @1, @25, @26, @27, @28],
+                                @"1: 标准":@[@0, @1, @3, @5, @20, @6, @7],
+                                @"2: 检查器":@[@0, @3, @5, @6, @7, @9, @12],
+                                @"3: 性能":@[@0, @3, @16, @4, @5, @17, @7, @12],
+                                @"4: 极简":@[@0, @3, @7],
+                                @"5: Mach 专注":@[@0, @3, @12, @13, @15, @14, @21, @22],
+                                @"6: 内存占用":@[@0, @1, @7, @23, @24, @8],
+                                @"7: 网络使用":@[@0, @1, @33, @42, @43, @44, @45],
+                                @"8: 磁盘使用":@[@0, @1, @25, @26, @27, @28],
                             };
             } else {
                 presetList = @{
-                    @"1: Standard":@[@0, @1, @3, @5, @20, @6, @7],
-                    @"2: Inspector":@[@0, @3, @5, @6, @7, @9, @12],
-                    @"3: Performance":@[@0, @3, @16, @4, @5, @17, @7, @12],
-                    @"4: Minimalistic":@[@0, @3, @7],
-                    @"5: Mach-obsessed":@[@0, @3, @12, @13, @15, @14, @21, @22],
-                    @"6: RAM usage":@[@0, @1, @7, @23, @24, @8],
-                    @"7: Net usage":@[@0, @1, @33, @42, @43, @44, @45],
+                    @"1: 标准":@[@0, @1, @3, @5, @20, @6, @7],
+                    @"2: 检查器":@[@0, @3, @5, @6, @7, @9, @12],
+                    @"3: 性能":@[@0, @3, @16, @4, @5, @17, @7, @12],
+                    @"4: 极简":@[@0, @3, @7],
+                    @"5: Mach 专注":@[@0, @3, @12, @13, @15, @14, @21, @22],
+                    @"6: 内存占用":@[@0, @1, @7, @23, @24, @8],
+                    @"7: 网络使用":@[@0, @1, @33, @42, @43, @44, @45],
                 };
             }
         } else {
 			presetList = @{
-				@"1: Standard":@[@0, @1, @3, @5, @20, @6, @7, @9, @12, @13],
-				@"2: Inspector":@[@0, @1, @3, @5, @6, @7, @9, @10, @12, @13],
-				@"3: Performance":@[@0, @1, @3, @16, @4, @5, @17, @7, @23, @12, @13, @14, @15, @19],
-				@"4: Minimalistic":@[@0, @1, @3, @5, @7, @20],
-				@"5: Mach-obsessed":@[@0, @1, @5, @6, @7, @3, @12, @16, @13, @15, @14, @21, @22],
-				@"6: RAM usage":@[@0, @1, @3, @5, @7, @23, @24, @8],
-				@"7: Net usage":@[@0, @1, @3, @5, @33, @42, @43, @44, @45, @46, @47],
+				@"1: 标准":@[@0, @1, @3, @5, @20, @6, @7, @9, @12, @13],
+				@"2: 检查器":@[@0, @1, @3, @5, @6, @7, @9, @10, @12, @13],
+				@"3: 性能":@[@0, @1, @3, @16, @4, @5, @17, @7, @23, @12, @13, @14, @15, @19],
+				@"4: 极简":@[@0, @1, @3, @5, @7, @20],
+				@"5: Mach 专注":@[@0, @1, @5, @6, @7, @3, @12, @16, @13, @15, @14, @21, @22],
+				@"6: 内存占用":@[@0, @1, @3, @5, @7, @23, @24, @8],
+				@"7: 网络使用":@[@0, @1, @3, @5, @33, @42, @43, @44, @45, @46, @47],
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
-				@"8: Disk usage":@[@0, @1, @9, @25, @26, @27, @28, @24],
+				@"8: 磁盘使用":@[@0, @1, @9, @25, @26, @27, @28, @24],
 #endif
 			};
             if (@available(iOS 7, *)) {
                 presetList = @{
-                                @"1: Standard":@[@0, @1, @3, @5, @20, @6, @7, @9, @12, @13],
-                                @"2: Inspector":@[@0, @1, @3, @5, @6, @7, @9, @10, @12, @13],
-                                @"3: Performance":@[@0, @1, @3, @16, @4, @5, @17, @7, @23, @12, @13, @14, @15, @19],
-                                @"4: Minimalistic":@[@0, @1, @3, @5, @7, @20],
-                                @"5: Mach-obsessed":@[@0, @1, @5, @6, @7, @3, @12, @16, @13, @15, @14, @21, @22],
-                                @"6: RAM usage":@[@0, @1, @3, @5, @7, @23, @24, @8],
-                                @"7: Net usage":@[@0, @1, @3, @5, @33, @42, @43, @44, @45, @46, @47],
-                                @"8: Disk usage":@[@0, @1, @9, @25, @26, @27, @28, @24],
+                                @"1: 标准":@[@0, @1, @3, @5, @20, @6, @7, @9, @12, @13],
+                                @"2: 检查器":@[@0, @1, @3, @5, @6, @7, @9, @10, @12, @13],
+                                @"3: 性能":@[@0, @1, @3, @16, @4, @5, @17, @7, @23, @12, @13, @14, @15, @19],
+                                @"4: 极简":@[@0, @1, @3, @5, @7, @20],
+                                @"5: Mach 专注":@[@0, @1, @5, @6, @7, @3, @12, @16, @13, @15, @14, @21, @22],
+                                @"6: 内存占用":@[@0, @1, @3, @5, @7, @23, @24, @8],
+                                @"7: 网络使用":@[@0, @1, @3, @5, @33, @42, @43, @44, @45, @46, @47],
+                                @"8: 磁盘使用":@[@0, @1, @9, @25, @26, @27, @28, @24],
                             };
             } else {
                 presetList = @{
-                                               @"1: Standard":@[@0, @1, @3, @5, @20, @6, @7, @9, @12, @13],
-                                               @"2: Inspector":@[@0, @1, @3, @5, @6, @7, @9, @10, @12, @13],
-                                               @"3: Performance":@[@0, @1, @3, @16, @4, @5, @17, @7, @23, @12, @13, @14, @15, @19],
-                                               @"4: Minimalistic":@[@0, @1, @3, @5, @7, @20],
-                                               @"5: Mach-obsessed":@[@0, @1, @5, @6, @7, @3, @12, @16, @13, @15, @14, @21, @22],
-                                               @"6: RAM usage":@[@0, @1, @3, @5, @7, @23, @24, @8],
-                                               @"7: Net usage":@[@0, @1, @3, @5, @33, @42, @43, @44, @45, @46, @47],
-                                               //@"8: Disk usage":@[@0, @1, @9, @25, @26, @27, @28, @24],
+                                               @"1: 标准":@[@0, @1, @3, @5, @20, @6, @7, @9, @12, @13],
+                                               @"2: 检查器":@[@0, @1, @3, @5, @6, @7, @9, @10, @12, @13],
+                                               @"3: 性能":@[@0, @1, @3, @16, @4, @5, @17, @7, @23, @12, @13, @14, @15, @19],
+                                               @"4: 极简":@[@0, @1, @3, @5, @7, @20],
+                                               @"5: Mach 专注":@[@0, @1, @5, @6, @7, @3, @12, @16, @13, @15, @14, @21, @22],
+                                               @"6: 内存占用":@[@0, @1, @3, @5, @7, @23, @24, @8],
+                                               @"7: 网络使用":@[@0, @1, @3, @5, @33, @42, @43, @44, @45, @46, @47],
+                                               //@"8: 磁盘使用":@[@0, @1, @9, @25, @26, @27, @28, @24],
                                            };
             }
         }
@@ -112,7 +112,7 @@ static NSArray *presetNames;
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	self.navigationItem.title = @"Column presets";
+	self.navigationItem.title = @"列预设";
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -122,7 +122,7 @@ static NSArray *presetNames;
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	return @"Select a column layout";
+	return @"选择列布局";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -136,7 +136,7 @@ static NSArray *presetNames;
 	if (cell == nil)
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Preset"];
 	cell.textLabel.text = presetNames[indexPath.row];
-	NSString *colNames = @"Command";
+	NSString *colNames = @"命令行";
 	for (NSNumber *idx in presetList[presetNames[indexPath.row]]) {
 		NSInteger i = [idx intValue];
 		PSColumn *col = i ? [PSColumn psColumnWithTag:i] : nil;
@@ -178,8 +178,8 @@ enum InOutCols {
 {
 	[super viewDidLoad];
 	self.tableView.editing = YES;
-	self.navigationItem.title = @"Manage columns";
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Presets" style:UIBarButtonItemStylePlain
+	self.navigationItem.title = @"列管理";
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"预设" style:UIBarButtonItemStylePlain
 		target:self action:@selector(openPresets)];
 }
 
@@ -213,12 +213,12 @@ enum InOutCols {
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	return section == 0 ? @"Shown columns" : @"Inactive columns";
+	return section == 0 ? @"已显示列" : @"未启用列";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-	return section == 0 ? @"Only columns that fit will actually be shown" : nil;
+	return section == 0 ? @"仅实际能够容纳的列才会显示" : nil;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

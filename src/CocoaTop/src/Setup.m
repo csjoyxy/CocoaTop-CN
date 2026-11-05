@@ -31,7 +31,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	self.navigationItem.title = @"Settings";
+	self.navigationItem.title = @"设置";
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -41,7 +41,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	return @"Choose";
+	return @"选择";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -108,24 +108,24 @@
 
 - (IBAction)factoryReset
 {
-	[[[UIAlertView alloc] initWithTitle:@"Reset" message:@"Reset settings to default values?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil] show];
+	[[[UIAlertView alloc] initWithTitle:@"重置" message:@"将设置恢复为默认值？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil] show];
 }
 
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	self.navigationItem.title = @"Settings";
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStylePlain
+	self.navigationItem.title = @"设置";
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"重置" style:UIBarButtonItemStylePlain
 		target:self action:@selector(factoryReset)];
 	optionsList = @[
-		[OptionItem withAccessory:[UILabel class] key:@"UpdateInterval" label:@"Update interval (seconds)" chooseFrom:@[@"0.5",@"1",@"2",@"3",@"5",@"10",@"Never"]],
-		[OptionItem withAccessory:[UILabel class] key:@"FirstColumnStyle" label:@"First column style" chooseFrom:@[@"Bundle Identifier",@"Bundle Name",@"Bundle Display Name",@"Executable Name",@"Executable With Args"]],
-		[OptionItem withAccessory:[UISwitch class] key:@"FullWidthCommandLine" label:@"Full width command line" chooseFrom:nil],
-		[OptionItem withAccessory:[UISwitch class] key:@"ShortenPaths" label:@"Show short (symlinked) paths" chooseFrom:nil],
-		[OptionItem withAccessory:[UISwitch class] key:@"AutoJumpNewProcess" label:@"Auto scroll to new/terminated processes" chooseFrom:nil],
-		[OptionItem withAccessory:[UISwitch class] key:@"ShowHeader" label:@"Show column sort header" chooseFrom:nil],
-		[OptionItem withAccessory:[UISwitch class] key:@"ShowFooter" label:@"Show column totals (footer)" chooseFrom:nil],
-		[OptionItem withAccessory:[UISwitch class] key:@"ColorDiffs" label:@"Highlight changing values" chooseFrom:nil],
+		[OptionItem withAccessory:[UILabel class] key:@"UpdateInterval" label:@"更新间隔（秒）" chooseFrom:@[@"0.5",@"1",@"2",@"3",@"5",@"10",@"从不"]],
+		[OptionItem withAccessory:[UILabel class] key:@"FirstColumnStyle" label:@"首列样式" chooseFrom:@[@"Bundle Identifier",@"Bundle Name",@"Bundle Display Name",@"Executable Name",@"Executable With Args"]],
+		[OptionItem withAccessory:[UISwitch class] key:@"FullWidthCommandLine" label:@"全宽命令行" chooseFrom:nil],
+		[OptionItem withAccessory:[UISwitch class] key:@"ShortenPaths" label:@"显示简短（软链接）路径" chooseFrom:nil],
+		[OptionItem withAccessory:[UISwitch class] key:@"AutoJumpNewProcess" label:@"自动滚动到新建/已终止进程" chooseFrom:nil],
+		[OptionItem withAccessory:[UISwitch class] key:@"ShowHeader" label:@"显示列排序表头" chooseFrom:nil],
+		[OptionItem withAccessory:[UISwitch class] key:@"ShowFooter" label:@"显示列总计（页脚）" chooseFrom:nil],
+		[OptionItem withAccessory:[UISwitch class] key:@"ColorDiffs" label:@"高亮变动数值" chooseFrom:nil],
 	];
 }
 
@@ -148,7 +148,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	return @"General";
+	return @"通用";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

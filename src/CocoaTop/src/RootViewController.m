@@ -40,8 +40,8 @@
 	switch (item) {
 	case 0: view = [[SetupViewController alloc] initWithStyle:UITableViewStyleGrouped]; break;
 	case 1: view = [[SetupColsViewController alloc] initWithStyle:UITableViewStyleGrouped]; break;
-	case 2: view = [[HtmlViewController alloc] initWithURL:@"guide" title:@"Quick Guide"]; break;
-	case 3: view = [[HtmlViewController alloc] initWithURL:@"story" title:@"The Story"]; break;
+	case 2: view = [[HtmlViewController alloc] initWithURL:@"guide" title:@"快速指南"]; break;
+	case 3: view = [[HtmlViewController alloc] initWithURL:@"story" title:@"开发故事"]; break;
 	}
 	if (view)
 		[self.navigationController pushViewController:view animated:YES];
@@ -92,7 +92,7 @@
 	[super viewDidLoad];
 	[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
 	bool isPhone = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone;
-	[self popupMenuWithItems:@[@"Settings", @"Columns", @"Quick Guide", @"About"] selected:-1 aligned:UIControlContentHorizontalAlignmentLeft];
+	[self popupMenuWithItems:@[@"设置", @"列管理", @"快速指南", @"关于"] selected:-1 aligned:UIControlContentHorizontalAlignmentLeft];
 	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"UIButtonBarHamburger"] style:UIBarButtonItemStylePlain
 		target:self action:@selector(popupMenuToggle)];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
@@ -163,12 +163,12 @@
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
-	searchBar.placeholder = [NSString stringWithFormat:@"filter by %@ <tap another column>", filterColumn.fullname.lowercaseString];
+	searchBar.placeholder = [NSString stringWithFormat:@"按 %@ 过滤 <轻点其他列>", filterColumn.fullname.lowercaseString];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
 {
-	searchBar.placeholder = [NSString stringWithFormat:@"filter by %@", filterColumn.fullname.lowercaseString];
+	searchBar.placeholder = [NSString stringWithFormat:@"按 %@ 过滤", filterColumn.fullname.lowercaseString];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
@@ -236,12 +236,12 @@
     
     if (shortLabel) {
         statusLabel.frame = CGRectMake(statusLabel.frame.origin.x, statusLabel.frame.origin.y, self.tableView.frame.size.width - 80, 40);
-        statusLabel.text = [NSString stringWithFormat:@"Free: %.1f MB  CPU: %.1f%%",
+        statusLabel.text = [NSString stringWithFormat:@"空闲: %.1f MB  CPU: %.1f%%",
         (float)procs.memFree / 1024 / 1024,
         (float)procs.totalCpu / 10];
     } else {
         statusLabel.frame = CGRectMake(statusLabel.frame.origin.x, statusLabel.frame.origin.y, self.tableView.frame.size.width - 150, 40);
-        statusLabel.text = [NSString stringWithFormat:@"Processes: %lu   Threads: %lu   Free: %.1f/%.1f MB   CPU: %.1f%%",
+        statusLabel.text = [NSString stringWithFormat:@"进程: %lu   线程: %lu   空闲: %.1f/%.1f MB   CPU: %.1f%%",
         (unsigned long)procs.totalCount,
         (unsigned long)procs.threadCount,
         (float)procs.memFree / 1024 / 1024,
@@ -366,12 +366,12 @@
             if (lastHorizationWindowSizeClass != self.view.window.traitCollection.horizontalSizeClass || lastHorizationWindowWidth != self.view.bounds.size.width) {
                 if (self.view.window.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
                     statusLabel.frame = CGRectMake(statusLabel.frame.origin.x, statusLabel.frame.origin.y, self.tableView.frame.size.width - 80, 40);
-                    statusLabel.text = [NSString stringWithFormat:@"Free: %.1f MB  CPU: %.1f%%",
+                    statusLabel.text = [NSString stringWithFormat:@"空闲: %.1f MB  CPU: %.1f%%",
                     (float)procs.memFree / 1024 / 1024,
                     (float)procs.totalCpu / 10];
                 } else {
                     statusLabel.frame = CGRectMake(statusLabel.frame.origin.x, statusLabel.frame.origin.y, self.tableView.frame.size.width - 150, 40);
-                    statusLabel.text = [NSString stringWithFormat:@"Processes: %lu   Threads: %lu   Free: %.1f/%.1f MB   CPU: %.1f%%",
+                    statusLabel.text = [NSString stringWithFormat:@"进程: %lu   线程: %lu   空闲: %.1f/%.1f MB   CPU: %.1f%%",
                     (unsigned long)procs.totalCount,
                     (unsigned long)procs.threadCount,
                     (float)procs.memFree / 1024 / 1024,
@@ -521,8 +521,8 @@
 		NSInteger error = exitCode < 0 ? EIO : stdoutString.integerValue;
 		dispatch_async(dispatch_get_main_queue(), ^{
 			if (error) {
-				NSString *msg = [NSString stringWithFormat:@"Error %ld while terminating app", (long)error];
-				[[[UIAlertView alloc] initWithTitle:processName message:msg delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+				NSString *msg = [NSString stringWithFormat:@"终止应用时发生错误 %ld", (long)error];
+				[[[UIAlertView alloc] initWithTitle:processName message:msg delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil] show];
 			}
 			// Refresh immediately to show process termination.
 			[self->timer performSelector:@selector(fire) withObject:nil afterDelay:.1f];
@@ -532,12 +532,12 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return @"KILL";
+	return @"强行终止";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForSwipeAccessoryButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return @"TERM";
+	return @"终止";
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath

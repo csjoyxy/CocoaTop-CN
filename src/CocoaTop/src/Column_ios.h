@@ -1,80 +1,80 @@
-[PSColumn psColumnWithName:@"Command line" fullname:@"Command line" align:NSTextAlignmentLeft width:170 tag:0 style:ColumnStylePathTrunc | ColumnStyleTooLong
+[PSColumn psColumnWithName:@"命令行" fullname:@"命令行" align:NSTextAlignmentLeft width:170 tag:0 style:ColumnStylePathTrunc | ColumnStyleTooLong
 			data:^NSString*(PSProc *proc) { return [proc.executable stringByAppendingString:proc.args]; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { return [a.name caseInsensitiveCompare:b.name]; }
-			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:procs.count == procs.totalCount ? @"Total processes: %lu" : @"Shown processes: %lu", (unsigned long)procs.count]; }
-			descr:@"Full command line with path and arguments.\n\n"
-				"If the name is given in brackets, then the command line cannot be acquired - usually it's either the Kernel or a zombie process.\n\n"
-				"Summary of this column shows the total number of processes."],
-		[PSColumn psColumnWithName:@"PID" fullname:@"Process ID" align:NSTextAlignmentRight width:50 tag:1 style:0
+			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:procs.count == procs.totalCount ? @"进程总数：%lu" : @"显示的进程：%lu", (unsigned long)procs.count]; }
+			descr:@"带路径和参数的完整命令行。\n\n"
+				"如果名称带有方括号，则表示无法获取命令行 - 通常是内核或僵尸进程。\n\n"
+				"此列的总计显示进程总数。"],
+		[PSColumn psColumnWithName:@"PID" fullname:@"进程 ID" align:NSTextAlignmentRight width:50 tag:1 style:0
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc.pid]; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(pid); } summary:nil
-			descr:@"Unique ID of a BSD process.\n\n"
-				"This always grows upwards. Kernel is always pid 0, launchd is pid 1."],
-		[PSColumn psColumnWithName:@"PPID" fullname:@"Parent PID" align:NSTextAlignmentRight width:50 tag:2 style:0
+			descr:@"BSD 进程的唯一 ID。\n\n"
+				"该值单调递增。内核始终为 pid 0，launchd 为 pid 1。"],
+		[PSColumn psColumnWithName:@"PPID" fullname:@"父进程 ID" align:NSTextAlignmentRight width:50 tag:2 style:0
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc.ppid]; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(ppid); } summary:nil
-			descr:@"Unique ID of process' parent - the one that called exec()/fork().\n\n"
-				"On iOS most processes are jobs, thus they are launched by launchd and have parent pid 1."],
-		[PSColumn psColumnWithName:@"%" fullname:@"%CPU Usage" align:NSTextAlignmentRight width:50 tag:3 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程父进程的唯一 ID - 即调用了 exec()/fork() 的进程。\n\n"
+				"在 iOS 上，大多数进程都是作业（job），因此它们由 launchd 启动，父 pid 为 1。"],
+		[PSColumn psColumnWithName:@"%" fullname:@"%CPU 使用率" align:NSTextAlignmentRight width:50 tag:3 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc.pcpu ? @"-" : [NSString stringWithFormat:@"%.1f", (float)proc.pcpu / 10]; }
 			floatData:^double(PSProc *proc) { return (double)proc.pcpu / 10; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(pcpu); }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@"%.1f%%", (float)procs.totalCpu / 10]; }
 			color:^UIColor*(PSProc *proc) { DIFF(pcpu); }
-			descr:@"The sum of CPU usage by all threads of a process.\n\n"
-				"CPU usage is expressed in % per CPU core, thus it sums up to cores\u00D7100%. "
-				"Sometimes it can even exceed this value, due to reasons explained in this app's 'About' section. This is hilarious!\n\n"
-				"Summary of this column indicates total CPU usage."],
-		[PSColumn psColumnWithName:@"Time" fullname:@"Process Time" align:NSTextAlignmentRight width:75 tag:4 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程所有线程的 CPU 使用率总和。\n\n"
+				"CPU 使用率以每个 CPU 核心的 % 表示，因此总和可达核心数\u00D7100%。"
+				"由于本应用“关于”一节中所解释的原因，有时它甚至可以超过该值。这真有意思！\n\n"
+				"此列的总计表示 CPU 总使用率。"],
+		[PSColumn psColumnWithName:@"时间" fullname:@"进程时间" align:NSTextAlignmentRight width:75 tag:4 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return psProcessCpuTime(proc.ptime); } floatData:^double(PSProc *proc) { return proc.ptime/100; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(ptime); }
 			summary:^NSString*(PSProcArray* procs) { return psSystemUptime(); }
 			color:^UIColor*(PSProc *proc) { DIFF(ptime); }
-			descr:@"Total CPU time taken by the process - summed for all CPU cores.\n\n"
-				"Summary of this column indicates OS uptime since kernel boot."],
-		[PSColumn psColumnWithName:@"S" fullname:@"Mach Task State" align:NSTextAlignmentLeft width:30 tag:5 style:0
+			descr:@"进程占用的 CPU 总时间 - 所有 CPU 核心的累计和。\n\n"
+				"此列的总计表示自内核引导以来的系统运行时间。"],
+		[PSColumn psColumnWithName:@"S" fullname:@"Mach Task 状态" align:NSTextAlignmentLeft width:30 tag:5 style:0
 			data:^NSString*(PSProc *proc) { return psProcessStateString(proc); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { return a.state == b.state ? b->basic.suspend_count - a->basic.suspend_count : a.state - b.state; }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@"%d/%d", procs.runningCount, procs.coresCount]; }
-			descr:@"Process state (similar to original top).\n\nCan be one of the following:\n"
-				"R	Running: at least one thread within this process is running now\n"
-				"U	Uninterruptible (Stuck): a thread is waiting on I/O in a system call\n"
-				"S	Sleeping: all threads of a process are sleeping\n"
-				"I	Idle: all threads are sleeping for at least 20 seconds\n"
-				"T	Terminated: all threads stopped\n"
-				"H	Halted: all threads halted at a clean point\n"
-				"D	The process is stopped by a signal (can be used for debugging)\n"
-				"Z	Zombie: awaiting termination or 'orphan'\n"
-				"?	Running state is unknown (access to threads was denied)\n\n"
-				"Additional process attributes can follow:\n"
-				"\u25BC	Nice: lower priority, also see 'Nice' column\n"
-				"\u25B2	Not nice: higher priority\n"
-				"t	Debugged process is being traced\n"
-				"z	Process is being terminated at the moment\n"
-				"w	Process' parent is waiting for this child after fork\n"
-				"K	The system process (kernel)\n"
-				"B	Application is suspended by SpringBoard (iOS specific)\n\n"
-				"Summary of this column shows two numbers: the first one is the count of processes in running state, the second one is the number of CPU cores. "
-				"Sometimes there are more running processes than there are CPU cores, but this is just a glitch due to kernel state changing while data is collected."],
-		[PSColumn psColumnWithName:@"Flags" fullname:@"Raw Process Flags (Hex)" align:NSTextAlignmentLeft width:70 tag:6 style:0
+			descr:@"进程状态（类似于原版 top）。\n\n可以是以下之一：\n"
+				"R	运行（Running）：该进程中至少有一个线程正在运行\n"
+				"U	不可中断（Uninterruptible/卡住）：线程正在系统调用中等待 I/O\n"
+				"S	睡眠（Sleeping）：进程的所有线程都在睡眠\n"
+				"I	空闲（Idle）：所有线程睡眠至少 20 秒\n"
+				"T	已终止（Terminated）：所有线程已停止\n"
+				"H	已挂起（Halted）：所有线程在干净点挂起\n"
+				"D	进程被信号停止（可用于调试）\n"
+				"Z	僵尸（Zombie）：等待终止或“孤儿”\n"
+				"?	运行状态未知（访问线程被拒绝）\n\n"
+				"后面可能跟随附加进程属性：\n"
+				"\u25BC	Nice：较低优先级，另见“Nice”列\n"
+				"\u25B2	Not nice：较高优先级\n"
+				"t	被调试的进程正在被追踪\n"
+				"z	进程当前正在被终止\n"
+				"w	fork 后父进程正在等待该子进程\n"
+				"K	系统进程（内核）\n"
+				"B	应用被 SpringBoard 挂起（iOS 特有）\n\n"
+				"此列的总计显示两个数字：第一个是处于运行状态的进程数，第二个是 CPU 核心数。"
+				"有时运行的进程数多于 CPU 核心数，但这只是在收集数据时内核状态发生变化引起的瞬间偏差。"],
+		[PSColumn psColumnWithName:@"标志" fullname:@"原始进程标志（十六进制）" align:NSTextAlignmentLeft width:70 tag:6 style:0
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%08X", proc.flags]; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(flags); } summary:nil
-			descr:@"Process flags represented as a hexadecimal number.\n\nThis is a bitmask composed of the following:\n"
-				"0001	P_ADVLOCK		Process may hold POSIX adv. lock\n"
-				"0002	P_CONTROLT    	Has a controlling terminal\n"
-				"0004	P_LP64 			64-bit process\n"
-				"0008	P_NOCLDSTOP 	Bad parent: no SIGCHLD when child stops\n"
-				"0010	P_PPWAIT    	\tParent is waiting for this child to exec/exit\n"
-				"0020	P_PROFIL    	\tHas started profiling\n"
-				"0040	P_SELECT    	\tSelecting; wakeup/waiting danger\n"
-				"0080	P_CONTINUED  	Process was stopped and continued\n"
-				"0100	P_SUGID			Has set privileges since last exec\n"
-				"0200	P_SYSTEM    	\tSystem process: no signals, stats or swap\n"
-				"0400	P_TIMEOUT		Timing out during sleep\n"
-				"0800	P_TRACED    	\tDebugged process being traced\n"
-				"1000	P_DISABLE_ASLR	Disable address space randomization\n"
-				"2000	P_WEXIT			Process is working on exiting\n"
-				"4000	P_EXEC      	\tProcess has called exec()"],
+			descr:@"进程标志以十六进制数表示。\n\n这是由以下标志组成的位掩码：\n"
+				"0001	P_ADVLOCK		进程可能持有 POSIX 建议锁\n"
+				"0002	P_CONTROLT    	拥有控制终端\n"
+				"0004	P_LP64 			64 位进程\n"
+				"0008	P_NOCLDSTOP 	子进程停止时不向父进程发送 SIGCHLD\n"
+				"0010	P_PPWAIT    	\t父进程正等待该子进程 exec/exit\n"
+				"0020	P_PROFIL    	\t已启动性能分析（profiling）\n"
+				"0040	P_SELECT    	\t正在 select；存在唤醒/等待风险\n"
+				"0080	P_CONTINUED  	进程已被停止并继续运行\n"
+				"0100	P_SUGID			自上次 exec 以来已设置特权\n"
+				"0200	P_SYSTEM    	\t系统进程：无信号、统计或交换\n"
+				"0400	P_TIMEOUT		睡眠期间超时\n"
+				"0800	P_TRACED    	\t被调试进程正在被追踪\n"
+				"1000	P_DISABLE_ASLR	禁用地址空间布局随机化\n"
+				"2000	P_WEXIT			进程正在退出中\n"
+				"4000	P_EXEC      	\t进程已调用 exec()"],
 				// "00040000 P_DELAYIDLESLEEP		Process is marked to delay idle sleep on disk IO\n"
 				// "00080000 P_CHECKOPENEVT			Check if a vnode has the OPENEVT flag set on open\n"
 				// "00100000 P_DEPENDENCY_CAPABLE	Process is ok to call vfs_markdependency()\n"
@@ -88,285 +88,281 @@
 				// "20000000 P_FORCEQUOTA			Force quota for root\n"
 			//*	// "40000000 P_NOCLDWAIT			No zombies when chil procs exit\n"
 				// "80000000 P_NOREMOTEHANG			Don't hang on remote FS ops"],
-		[PSColumn psColumnWithName:@"Sandbox" fullname:@"Sandbox" align:NSTextAlignmentLeft width:70 tag:52 style:0
+		[PSColumn psColumnWithName:@"沙盒" fullname:@"沙盒" align:NSTextAlignmentLeft width:70 tag:52 style:0
 			data:^NSString*(PSProc *proc) { return proc.sandboxed < 0 ? @"-" : proc.sandboxed ? @"Yes" : @"No"; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(sandboxed); } summary:nil
-			descr:@"Whether the process is restricted by an Apple Seatbelt sandbox profile."],
-		[PSColumn psColumnWithName:@"RMem" fullname:@"Resident Memory Usage" align:NSTextAlignmentRight width:70 tag:7 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程是否受到 Apple Seatbelt 沙盒配置文件的限制。"],
+		[PSColumn psColumnWithName:@"RMem" fullname:@"常驻内存占用" align:NSTextAlignmentRight width:70 tag:7 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->basic.resident_size ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->basic.resident_size countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->basic.resident_size; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(basic.resident_size); }
 			summary:^NSString*(PSProcArray* procs) { return [NSByteCountFormatter stringFromByteCount:procs.memUsed countStyle:NSByteCountFormatterCountStyleMemory]; }
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(basic.resident_size); }
-			descr:@"Resident memory usage. Also see 'Physical Memory Footprint' column."],
-		[PSColumn psColumnWithName:@"VSize" fullname:@"Virtual Address Space Usage" align:NSTextAlignmentRight width:70 tag:8 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"常驻内存占用。另见“物理内存占用”列。"],
+		[PSColumn psColumnWithName:@"VSize" fullname:@"虚拟地址空间占用" align:NSTextAlignmentRight width:70 tag:8 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->basic.virtual_size ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->basic.virtual_size countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->basic.virtual_size; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(basic.virtual_size); }
 			summary:^NSString*(PSProcArray* procs) { return [NSByteCountFormatter stringFromByteCount:procs.memTotal countStyle:NSByteCountFormatterCountStyleMemory]; }
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(basic.virtual_size); }
-			descr:@"Virtual address space usage.\n\n"
-				"This includes address space taken by dynamic libraries."],
-		[PSColumn psColumnWithName:@"User" fullname:@"User Id" align:NSTextAlignmentLeft width:80 tag:9 style:0
+			descr:@"虚拟地址空间占用。\n\n"
+				"包含动态库所占用的地址空间。"],
+		[PSColumn psColumnWithName:@"用户" fullname:@"用户 ID" align:NSTextAlignmentLeft width:80 tag:9 style:0
 			data:^NSString*(PSProc *proc) { return [NSString stringWithCString:user_from_uid(proc.uid, 0) encoding:NSASCIIStringEncoding]; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(uid); }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@" mobile: %d", procs.mobileCount]; }
-			descr:@"Effective (current) user id.\n\n"
-				"Summary of this column denotes the number of processes executing as user (aka 'mobile')."],
-		[PSColumn psColumnWithName:@"Group" fullname:@"Group Id" align:NSTextAlignmentLeft width:80 tag:10 style:0
+			descr:@"有效（当前）用户 ID。\n\n"
+				"此列的总计表示以用户（即“mobile”）身份执行的进程数。"],
+		[PSColumn psColumnWithName:@"组" fullname:@"组 ID" align:NSTextAlignmentLeft width:80 tag:10 style:0
 			data:^NSString*(PSProc *proc) { return [NSString stringWithCString:group_from_gid(proc.gid, 0) encoding:NSASCIIStringEncoding]; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(gid); } summary:nil
-			descr:@"Process group id."],
-		[PSColumn psColumnWithName:@"TTY" fullname:@"Terminal" align:NSTextAlignmentLeft width:65 tag:11 style:ColumnStyleSortDesc
+			descr:@"进程组 ID。"],
+		[PSColumn psColumnWithName:@"TTY" fullname:@"终端" align:NSTextAlignmentLeft width:65 tag:11 style:ColumnStyleSortDesc
 			data:^NSString*(PSProc *proc) { return psProcessTty(proc); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(tdev); } summary:nil
-			descr:@"For console processes this contains the name of the controlling terminal (TTY)."],
-		[PSColumn psColumnWithName:@"Thr" fullname:@"Thread Count" align:NSTextAlignmentRight width:40 tag:12 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"对于控制台进程，此项包含控制终端（TTY）的名称。"],
+		[PSColumn psColumnWithName:@"Thr" fullname:@"线程数" align:NSTextAlignmentRight width:40 tag:12 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc.threads]; } floatData:^double(PSProc *proc) { return proc.threads; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(threads); }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@"%u", procs.threadCount]; }
 			color:^UIColor*(PSProc *proc) { DIFF(threads); }
-			descr:@"Number of threads in the process.\n\n"
-				"Tap the process and go to 'Threads' pane for lots of details."],
-		[PSColumn psColumnWithName:@"Ports" fullname:@"Mach Ports" align:NSTextAlignmentRight width:50 tag:13 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程中的线程数。\n\n"
+				"轻点进程并进入“线程”面板可查看详细信息。"],
+		[PSColumn psColumnWithName:@"Ports" fullname:@"Mach 端口" align:NSTextAlignmentRight width:50 tag:13 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc.ports]; } floatData:^double(PSProc *proc) { return proc.ports; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(ports); }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@"%u", procs.portCount]; }
 			color:^UIColor*(PSProc *proc) { DIFF(ports); }
-			descr:@"Number of Mach ports opened by the process.\n\n"
-				"Mach ports are the primary means of low-level communication with the kernel and between the processes in a microkernel environment."],
-		[PSColumn psColumnWithName:@"Mach" fullname:@"Mach System Calls (Delta)" align:NSTextAlignmentRight width:52 tag:14 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程打开的 Mach 端口数。\n\n"
+				"Mach 端口是微内核环境中与内核以及进程之间进行底层通信的主要方式。"],
+		[PSColumn psColumnWithName:@"Mach" fullname:@"Mach 系统调用（增量）" align:NSTextAlignmentRight width:52 tag:14 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", DELTA(proc,events,syscalls_mach)]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,events,syscalls_mach); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(events, syscalls_mach); }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@"%u", procs.machCalls]; }
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(events, syscalls_mach); }
-			descr:@"Number of Mach system calls per update interval.\n\n"
-				"Mach system calls are calls to the Mach microkernel within the XNU kernel. "
-				"There are 180 to 200 Mach services available on iOS depending on kernel version."],
-		[PSColumn psColumnWithName:@"BSD" fullname:@"BSD System Calls (Delta)" align:NSTextAlignmentRight width:52 tag:15 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内 Mach 系统调用的次数。\n\n"
+				"Mach 系统调用是对 XNU 内核中 Mach 微内核的调用。"
+				"根据内核版本不同，iOS 上有 180 到 200 个可用的 Mach 服务。"],
+		[PSColumn psColumnWithName:@"BSD" fullname:@"BSD 系统调用（增量）" align:NSTextAlignmentRight width:52 tag:15 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", DELTA(proc,events,syscalls_unix)]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,events,syscalls_unix); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(events, syscalls_unix); }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@"%u", procs.unixCalls]; }
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(events, syscalls_unix); }
-			descr:@"Number of BSD system calls per update interval.\n\n"
-				"BSD system calls are calls to the BSD part of the XNU kernel. "
-				"There are almost 1000 BSD services available on iOS depending on kernel version."],
-		[PSColumn psColumnWithName:@"CSw" fullname:@"Context Switches (Delta)" align:NSTextAlignmentRight width:52 tag:16 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内 BSD 系统调用的次数。\n\n"
+				"BSD 系统调用是对 XNU 内核中 BSD 部分的调用。"
+				"根据内核版本不同，iOS 上有近 1000 个可用的 BSD 服务。"],
+		[PSColumn psColumnWithName:@"CSw" fullname:@"上下文切换（增量）" align:NSTextAlignmentRight width:52 tag:16 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", DELTA(proc,events,csw)]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,events,csw); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(events, csw); }
 			summary:^NSString*(PSProcArray* procs) { return [NSString stringWithFormat:@"%u", procs.switchCount]; }
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(events, csw); }
-			descr:@"Number of context switches by this process per update interval.\n\n"
-				"This is the number of times the CPU has activated this process to execute its code.\n\n"
-				"Summary of this column indicates total number of context switches per update interval."],
-		[PSColumn psColumnWithName:@"Prio" fullname:@"Mach Actual Threads Priority" align:NSTextAlignmentRight width:42 tag:17 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内此进程的上下文切换次数。\n\n"
+				"这是 CPU 激活该进程以执行其代码的次数。\n\n"
+				"此列的总计表示每个更新间隔内的上下文切换总数。"],
+		[PSColumn psColumnWithName:@"Prio" fullname:@"Mach 线程实际优先级" align:NSTextAlignmentRight width:42 tag:17 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%@%u", 	proc->basic.policy == POLICY_RR ? @"R:" : proc->basic.policy == POLICY_FIFO ? @"F:" : @"", proc.prio]; }
 			floatData:^double(PSProc *proc) { return proc.prio; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(prio); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF(prio); }
-			descr:@"The highest priority of a thread within the process. Can be prefixed by the process' default scheduling scheme.\n\n"
-				"There are several scheduling schemes supported by Mach, 'Time Sharing' being the default. The other two, 'Round-Robin' "
-				"and 'FIFO', will be marked in this column using prefixes R: and F: respectively. Tap the process and go to 'Threads' pane to see "
-				"actual priorities and scheduling schemes of every thread."],
-		[PSColumn psColumnWithName:@"BPri" fullname:@"Base Process Priority" align:NSTextAlignmentRight width:42 tag:18 style:ColumnStyleSortDesc
+			descr:@"进程内线程的最高优先级。可能会带有进程默认调度方案的前缀。\n\n"
+				"Mach 支持多种调度方案，默认为“时间片轮转（Time Sharing）”。另外两种方案“Round-Robin”"
+				"和“FIFO”将分别在此列中使用前缀 R: 和 F: 标记。轻点进程并进入“线程”面板可查看每个线程的实际优先级和调度方案。"],
+		[PSColumn psColumnWithName:@"BPri" fullname:@"进程基本优先级" align:NSTextAlignmentRight width:42 tag:18 style:ColumnStyleSortDesc
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc.priobase]; } floatData:^double(PSProc *proc) { return proc.priobase; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(priobase); } summary:nil
-			descr:@"The base thread priority of a process.\n\n"
-				"This is the default priority set for newly created threads. Tap the process and go to "
-				"'Threads' pane to see actual priorities and scheduling schemes of existing threads."],
-		[PSColumn psColumnWithName:@"Nice" fullname:@"Process Nice Value" align:NSTextAlignmentRight width:42 tag:19 style:ColumnStyleColor
+			descr:@"进程的基本线程优先级。\n\n"
+				"这是为新创建线程设置的默认优先级。轻点进程并进入“线程”面板可查看现有线程的实际优先级和调度方案。"],
+		[PSColumn psColumnWithName:@"Nice" fullname:@"进程 Nice 值" align:NSTextAlignmentRight width:42 tag:19 style:ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%d", proc.nice]; } floatData:^double(PSProc *proc) { return proc.nice; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(nice); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF(nice); }
-			descr:@"A positive 'nice' value lowers the priority of the process' threads. A negative value raises the priority.\n\n"
-				"This is also indicated in the 'Process State' column by symbols \u25BC and \u25B2 respectively."],
-		[PSColumn psColumnWithName:@"Role" fullname:@"Mach Task Role" align:NSTextAlignmentLeft width:75 tag:20 style:0
+			descr:@"正的“nice”值会降低进程线程的优先级。负值会提高优先级。\n\n"
+				"这也分别在“进程状态”列中通过符号 \u25BC 和 \u25B2 表示。"],
+		[PSColumn psColumnWithName:@"Role" fullname:@"Mach Task 角色" align:NSTextAlignmentLeft width:75 tag:20 style:0
 			data:^NSString*(PSProc *proc) { return psTaskRoleString(proc); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { return (a.role + (a.role <= 0 ? 50 : 0)) - (b.role + (b.role <= 0 ? 50 : 0)); }
-			summary:^NSString*(PSProcArray* procs) { return procs.guiCount ? [NSString stringWithFormat:@" UIApps: %d", procs.guiCount] : @"   -"; }
-			descr:@"The assigned role for GUI apps (Mac-specific). This may not be shown on older iOS versions.\n\n"
-				"Possible values are:\n"
-				"None     	\tNon-UI task\n"
-				"Foreground \tNormal UI application in the foreground\n"
-				"Inactive 	\tNormal UI application in the background\n"
-				"Background	OS X: Normal UI application in the background\n"
-				"Controller	\tOS X: Controller service application\n"
-				"GfxServer 	\tOS X: Graphics management (window) server\n"
-				"Throttle 	\tOS X: Throttle application\n\n"
-				"Summary of this column denotes the number of GUI processes (user applications)."],
-		[PSColumn psColumnWithName:@"MSent" fullname:@"Mach Messages Sent" align:NSTextAlignmentRight width:70 tag:21 style:ColumnStyleSortDesc | ColumnStyleColor
+			summary:^NSString*(PSProcArray* procs) { return procs.guiCount ? [NSString stringWithFormat:@" UI应用: %d", procs.guiCount] : @"   -"; }
+			descr:@"为图形界面应用分配的角色（Mac 特有）。在较旧的 iOS 版本上可能不显示。\n\n"
+				"可能的值包括：\n"
+				"None     	\t非 UI 任务\n"
+				"Foreground \t前台普通 UI 应用\n"
+				"Inactive 	\t后台普通 UI 应用\n"
+				"Background	OS X: 后台普通 UI 应用\n"
+				"Controller	\tOS X: 控制器服务应用\n"
+				"GfxServer 	\tOS X: 图形管理（窗口）服务器\n"
+				"Throttle 	\tOS X: 节流应用\n\n"
+				"此列的总计表示图形界面进程（用户应用）的数量。"],
+		[PSColumn psColumnWithName:@"MSent" fullname:@"已发送 Mach 消息数" align:NSTextAlignmentRight width:70 tag:21 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc->events.messages_sent]; } floatData:^double(PSProc *proc) { return proc->events.messages_sent; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(events.messages_sent); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(events.messages_sent); }
-			descr:@"Total Mach messages sent by the process.\n\nMessages are sent using Mach ports. Also see 'Mach Ports' column."],
-		[PSColumn psColumnWithName:@"MRecv" fullname:@"Mach Messages Received" align:NSTextAlignmentRight width:70 tag:22 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程发送的 Mach 消息总数。\n\n消息使用 Mach 端口发送。另见“Mach 端口”列。"],
+		[PSColumn psColumnWithName:@"MRecv" fullname:@"已接收 Mach 消息数" align:NSTextAlignmentRight width:70 tag:22 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc->events.messages_received]; } floatData:^double(PSProc *proc) { return proc->events.messages_received; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(events.messages_received); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(events.messages_received); }
-			descr:@"Total Mach messages received by the process.\n\nMessages are received using Mach ports. Also see 'Mach Ports' column."],
+			descr:@"进程接收的 Mach 消息总数。\n\n消息使用 Mach 端口接收。另见“Mach 端口”列。"],
 		// Columns 23-29 have moved below (ios7 and up)
-		[PSColumn psColumnWithName:@"\u03A3Mach" fullname:@"Mach Total System Calls" align:NSTextAlignmentRight width:52 tag:30 style:ColumnStyleForSummary | ColumnStyleSortDesc | ColumnStyleColor
+		[PSColumn psColumnWithName:@"\u03A3Mach" fullname:@"Mach 系统调用总数" align:NSTextAlignmentRight width:52 tag:30 style:ColumnStyleForSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc->events.syscalls_mach]; } floatData:^double(PSProc *proc) { return proc->events.syscalls_mach; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(events.syscalls_mach); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(events.syscalls_mach); }
-			descr:@"Total number of Mach system calls by the process.\n\nAlso see 'Mach System Calls (Delta)' column."],
-		[PSColumn psColumnWithName:@"\u03A3BSD" fullname:@"BSD Total System Calls" align:NSTextAlignmentRight width:52 tag:31 style:ColumnStyleForSummary | ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程发起的 Mach 系统调用总数。\n\n另见“Mach 系统调用（增量）”列。"],
+		[PSColumn psColumnWithName:@"\u03A3BSD" fullname:@"BSD 系统调用总数" align:NSTextAlignmentRight width:52 tag:31 style:ColumnStyleForSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc->events.syscalls_unix]; } floatData:^double(PSProc *proc) { return proc->events.syscalls_unix; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(events.syscalls_unix); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(events.syscalls_unix); }
-			descr:@"Total number of BSD system calls by the process.\n\nAlso see 'BSD System Calls (Delta)' column."],
-		[PSColumn psColumnWithName:@"\u03A3CSw" fullname:@"Context Switches Total" align:NSTextAlignmentRight width:52 tag:32 style:ColumnStyleForSummary | ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程发起的 BSD 系统调用总数。\n\n另见“BSD 系统调用（增量）”列。"],
+		[PSColumn psColumnWithName:@"\u03A3CSw" fullname:@"上下文切换总数" align:NSTextAlignmentRight width:52 tag:32 style:ColumnStyleForSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%u", proc->events.csw]; } floatData:^double(PSProc *proc) { return proc->events.csw; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(events.csw); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(events.csw); }
-			descr:@"Total number of context switches by this process.\n\nAlso see 'Context Switches (Delta)' column."],
-		[PSColumn psColumnWithName:@"FDs" fullname:@"Open File/Socket Descriptors" align:NSTextAlignmentRight width:42 tag:33 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"此进程的上下文切换总数。\n\n另见“上下文切换（增量）”列。"],
+		[PSColumn psColumnWithName:@"FDs" fullname:@"打开的文件/套接字描述符" align:NSTextAlignmentRight width:42 tag:33 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc.files ? @"-" : [NSString stringWithFormat:@"%u", proc.files]; } floatData:^double(PSProc *proc) { return proc.files; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(files); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF(files); }
-			descr:@"Number of active file descriptors opened by process.\n\nThis includes open files, pipes, network sockets, kernel sockets, "
-				"and kernel queues. Tap the process and go to 'Open Files' pane for lots of details."],
-		[PSColumn psColumnWithName:@"Sock" fullname:@"Open Socket Descriptors" align:NSTextAlignmentRight width:42 tag:48 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"进程打开的活动文件描述符数量。\n\n包括打开的文件、管道、网络套接字、内核套接字和内核队列。轻点进程并进入“打开的文件”面板可查看详细信息。"],
+		[PSColumn psColumnWithName:@"Sock" fullname:@"打开的套接字描述符" align:NSTextAlignmentRight width:42 tag:48 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc.socks ? @"-" : [NSString stringWithFormat:@"%u", proc.socks]; } floatData:^double(PSProc *proc) { return proc.socks; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE(socks); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF(socks); }
-			descr:@"Number of active socket descriptors opened by process.\n\nThis includes IP network sockets, UNIX, and XNU kernel sockets. "
-				"Tap the process and go to 'Open Files' pane for details."],
+			descr:@"进程打开的活动套接字描述符数量。\n\n包括 IP 网络套接字、UNIX 以及 XNU 内核套接字。轻点进程并进入“打开的文件”面板可查看详细信息。"],
 		[PSColumn psColumnWithName:@"" fullname:@"Bundle Identifier" align:NSTextAlignmentLeft width:0 tag:34 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"CFBundleIdentifier"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"" fullname:@"Bundle Name" align:NSTextAlignmentLeft width:0 tag:35 style:ColumnStyleForSummary
+		[PSColumn psColumnWithName:@"" fullname:@"Bundle 名称" align:NSTextAlignmentLeft width:0 tag:35 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"CFBundleName"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"" fullname:@"Bundle Display Name" align:NSTextAlignmentLeft width:0 tag:36 style:ColumnStyleForSummary
+		[PSColumn psColumnWithName:@"" fullname:@"Bundle 显示名称" align:NSTextAlignmentLeft width:0 tag:36 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"CFBundleDisplayName"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"" fullname:@"Bundle Version" align:NSTextAlignmentLeft width:0 tag:37 style:ColumnStyleForSummary
+		[PSColumn psColumnWithName:@"" fullname:@"Bundle 版本" align:NSTextAlignmentLeft width:0 tag:37 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"CFBundleVersion"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"" fullname:@"Minimum OS Version" align:NSTextAlignmentLeft width:0 tag:38 style:ColumnStyleForSummary
+		[PSColumn psColumnWithName:@"" fullname:@"最低系统版本" align:NSTextAlignmentLeft width:0 tag:38 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"MinimumOSVersion"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"" fullname:@"Development SDK Version" align:NSTextAlignmentLeft width:0 tag:39 style:ColumnStyleForSummary
+		[PSColumn psColumnWithName:@"" fullname:@"开发 SDK 版本" align:NSTextAlignmentLeft width:0 tag:39 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"DTSDKName"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"" fullname:@"Development Platform Version" align:NSTextAlignmentLeft width:0 tag:40 style:ColumnStyleForSummary
+		[PSColumn psColumnWithName:@"" fullname:@"开发平台版本" align:NSTextAlignmentLeft width:0 tag:40 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"DTPlatformVersion"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"" fullname:@"Compiler Name" align:NSTextAlignmentLeft width:0 tag:41 style:ColumnStyleForSummary
+		[PSColumn psColumnWithName:@"" fullname:@"编译器名称" align:NSTextAlignmentLeft width:0 tag:41 style:ColumnStyleForSummary
 			data:^NSString*(PSProc *proc) { return proc.app ? proc.app[@"DTCompiler"] : @"N/A"; } sort:nil summary:nil],
-		[PSColumn psColumnWithName:@"NetRx" fullname:@"Net Bytes Received Delta" align:NSTextAlignmentRight width:70 tag:42 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
+		[PSColumn psColumnWithName:@"NetRx" fullname:@"网络接收字节（增量）" align:NSTextAlignmentRight width:70 tag:42 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !DELTA(proc,netstat,rxbytes) ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:DELTA(proc,netstat,rxbytes) countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,netstat,rxbytes); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(netstat, rxbytes); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(netstat, rxbytes); }
-			descr:@"Network bytes received by process per update period."],
-		[PSColumn psColumnWithName:@"NetTx" fullname:@"Net Bytes Sent Delta" align:NSTextAlignmentRight width:70 tag:43 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新周期内进程接收的网络字节数。"],
+		[PSColumn psColumnWithName:@"NetTx" fullname:@"网络发送字节（增量）" align:NSTextAlignmentRight width:70 tag:43 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !DELTA(proc,netstat,txbytes) ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:DELTA(proc,netstat,txbytes) countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,netstat,txbytes); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(netstat, txbytes); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(netstat, txbytes); }
-			descr:@"Network bytes transmitted by process per update period."],
-		[PSColumn psColumnWithName:@"\u03A3NetRx" fullname:@"Net Total Bytes Received" align:NSTextAlignmentRight width:70 tag:44 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新周期内进程发送的网络字节数。"],
+		[PSColumn psColumnWithName:@"\u03A3NetRx" fullname:@"网络接收总字节数" align:NSTextAlignmentRight width:70 tag:44 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->netstat.rxbytes ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->netstat.rxbytes countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->netstat.rxbytes; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(netstat.rxbytes); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(netstat.rxbytes); }
-			descr:@"Network bytes received by process since launch.\n\n"
-				"This value is inaccurate due to the fact that CocoaTop can only monitor process' sockets "
-				"while it is active. Sockets having a lifetime during CocoaTop being inactive are not counted."],
-		[PSColumn psColumnWithName:@"\u03A3NetTx" fullname:@"Net Total Bytes Sent" align:NSTextAlignmentRight width:70 tag:45 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"自启动以来进程接收的网络字节数。\n\n"
+				"该数值并不精确，因为 CocoaTop 只能在自身处于活跃状态时监控进程的套接字。"
+				"在 CocoaTop 处于非活跃状态期间存在的套接字不会被计入。"],
+		[PSColumn psColumnWithName:@"\u03A3NetTx" fullname:@"网络发送总字节数" align:NSTextAlignmentRight width:70 tag:45 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->netstat.txbytes ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->netstat.txbytes countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->netstat.txbytes; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(netstat.txbytes); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(netstat.txbytes); }
-			descr:@"Network bytes transmitted by process since launch.\n\n"
-				"This value is inaccurate due to the fact that CocoaTop can only monitor process' sockets "
-				"while it is active. Sockets having a lifetime during CocoaTop being inactive are not counted."],
-		[PSColumn psColumnWithName:@"\u03A3PktRx" fullname:@"Net Total Packets Received" align:NSTextAlignmentRight width:70 tag:46 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"自启动以来进程发送的网络字节数。\n\n"
+				"该数值并不精确，因为 CocoaTop 只能在自身处于活跃状态时监控进程的套接字。"
+				"在 CocoaTop 处于非活跃状态期间存在的套接字不会被计入。"],
+		[PSColumn psColumnWithName:@"\u03A3PktRx" fullname:@"网络接收总数据包数" align:NSTextAlignmentRight width:70 tag:46 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->netstat.rxpackets ? @"-" : [NSString stringWithFormat:@"%llu", proc->netstat.rxpackets]; }
 			floatData:^double(PSProc *proc) { return proc->netstat.rxpackets; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(netstat.rxpackets); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(netstat.rxpackets); }
-			descr:@"Network packets received by process since launch.\n\n"
-				"This value is inaccurate due to the fact that CocoaTop can only monitor process' sockets "
-				"while it is active. Sockets having a lifetime during CocoaTop being inactive are not counted."],
-		[PSColumn psColumnWithName:@"\u03A3PktTx" fullname:@"Net Total Packets Sent" align:NSTextAlignmentRight width:70 tag:47 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"自启动以来进程接收的网络数据包数。\n\n"
+				"该数值并不精确，因为 CocoaTop 只能在自身处于活跃状态时监控进程的套接字。"
+				"在 CocoaTop 处于非活跃状态期间存在的套接字不会被计入。"],
+		[PSColumn psColumnWithName:@"\u03A3PktTx" fullname:@"网络发送总数据包数" align:NSTextAlignmentRight width:70 tag:47 style:ColumnStyleNoSummary | ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->netstat.txpackets ? @"-" : [NSString stringWithFormat:@"%llu", proc->netstat.txpackets]; }
 			floatData:^double(PSProc *proc) { return proc->netstat.txpackets; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(netstat.txpackets); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(netstat.txpackets); }
-			descr:@"Network packets transmitted by process since launch.\n\n"
-				"This value is inaccurate due to the fact that CocoaTop can only monitor process' sockets "
-				"while it is active. Sockets having a lifetime during CocoaTop being inactive are not counted."],
-		[PSColumn psColumnWithName:@"WInt" fullname:@"Interrupt Wakeups (Delta)" align:NSTextAlignmentRight width:52 tag:49 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"自启动以来进程发送的网络数据包数。\n\n"
+				"该数值并不精确，因为 CocoaTop 只能在自身处于活跃状态时监控进程的套接字。"
+				"在 CocoaTop 处于非活跃状态期间存在的套接字不会被计入。"],
+		[PSColumn psColumnWithName:@"WInt" fullname:@"中断唤醒（增量）" align:NSTextAlignmentRight width:52 tag:49 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%llu", DELTA(proc,power,task_interrupt_wakeups)]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,power,task_interrupt_wakeups); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(power, task_interrupt_wakeups); }
 			summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(power, task_interrupt_wakeups); }
-			descr:@"Number of interrupt wakeups by this process per update interval.\n\n"
-				"This is the number of times the process was activated by the kernel due to a hardware interrupt."],
-		[PSColumn psColumnWithName:@"WIdle" fullname:@"Idle Wakeups (Delta)" align:NSTextAlignmentRight width:52 tag:50 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内此进程的中断唤醒次数。\n\n"
+				"这是由于硬件中断而导致进程被内核激活的次数。"],
+		[PSColumn psColumnWithName:@"WIdle" fullname:@"空闲唤醒（增量）" align:NSTextAlignmentRight width:52 tag:50 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%llu", DELTA(proc,power,task_platform_idle_wakeups)]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,power,task_platform_idle_wakeups); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(power, task_platform_idle_wakeups); }
 			summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(power, task_platform_idle_wakeups); }
-			descr:@"Number of idle wakeups by this process per update interval."],
-		[PSColumn psColumnWithName:@"WTmr" fullname:@"Timer Wakeups (Delta)" align:NSTextAlignmentRight width:52 tag:51 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内此进程的空闲唤醒次数。"],
+		[PSColumn psColumnWithName:@"WTmr" fullname:@"定时器唤醒（增量）" align:NSTextAlignmentRight width:52 tag:51 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return [NSString stringWithFormat:@"%llu", DELTA(proc,power,task_timer_wakeups_bin_1)]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,power,task_timer_wakeups_bin_1); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(power, task_timer_wakeups_bin_1); }
 			summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(power, task_timer_wakeups_bin_1); }
-			descr:@"Number of timer wakeups by this process per update interval."],
-		[PSColumn psColumnWithName:@"RMax" fullname:@"Maximum Resident Memory Usage" align:NSTextAlignmentRight width:70 tag:23 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内此进程的定时器唤醒次数。"],
+		[PSColumn psColumnWithName:@"RMax" fullname:@"最大常驻内存占用" align:NSTextAlignmentRight width:70 tag:23 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->basic.resident_size_max ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->basic.resident_size_max countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->basic.resident_size_max; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(basic.resident_size_max); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(basic.resident_size_max); }
-			descr:@"Maximum resident memory usage since process launch."],
-		[PSColumn psColumnWithName:@"Phys" fullname:@"Physical Memory Footprint" align:NSTextAlignmentRight width:70 tag:24 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"自进程启动以来的最大常驻内存占用。"],
+		[PSColumn psColumnWithName:@"Phys" fullname:@"物理内存占用" align:NSTextAlignmentRight width:70 tag:24 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->rusage.ri_phys_footprint ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->rusage.ri_phys_footprint countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->rusage.ri_phys_footprint; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(rusage.ri_phys_footprint); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(rusage.ri_phys_footprint); }
-			descr:@"Physical memory footprint.\n\nThis is the most accurate RAM usage data by process."],
-		[PSColumn psColumnWithName:@"DiskR" fullname:@"Disk I/O Bytes Read Delta" align:NSTextAlignmentRight width:70 tag:25 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"物理内存占用。\n\n这是按进程统计的最精确的内存占用数据。"],
+		[PSColumn psColumnWithName:@"DiskR" fullname:@"磁盘读取字节（增量）" align:NSTextAlignmentRight width:70 tag:25 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !DELTA(proc,rusage,ri_diskio_bytesread) ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:DELTA(proc,rusage,ri_diskio_bytesread) countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,rusage,ri_diskio_bytesread); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(rusage, ri_diskio_bytesread); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(rusage, ri_diskio_bytesread); }
-			descr:@"Bytes read from disk per update interval."],
-		[PSColumn psColumnWithName:@"DiskW" fullname:@"Disk I/O Bytes Written Delta" align:NSTextAlignmentRight width:70 tag:26 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内从磁盘读取的字节数。"],
+		[PSColumn psColumnWithName:@"DiskW" fullname:@"磁盘写入字节（增量）" align:NSTextAlignmentRight width:70 tag:26 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !DELTA(proc,rusage,ri_diskio_byteswritten) ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:DELTA(proc,rusage,ri_diskio_byteswritten) countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return DELTA(proc,rusage,ri_diskio_byteswritten); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_DELTA(rusage, ri_diskio_byteswritten); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_DELTA(rusage, ri_diskio_byteswritten); }
-			descr:@"Bytes written to disk per update interval."],
-		[PSColumn psColumnWithName:@"\u03A3DiskR" fullname:@"Disk I/O Total Bytes Read" align:NSTextAlignmentRight width:70 tag:27 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"每个更新间隔内写入磁盘的字节数。"],
+		[PSColumn psColumnWithName:@"\u03A3DiskR" fullname:@"磁盘读取总字节数" align:NSTextAlignmentRight width:70 tag:27 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->rusage.ri_diskio_bytesread ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->rusage.ri_diskio_bytesread countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->rusage.ri_diskio_bytesread; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(rusage.ri_diskio_bytesread); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(rusage.ri_diskio_bytesread); }
-			descr:@"Bytes read from disk since process launch."],
-		[PSColumn psColumnWithName:@"\u03A3DiskW" fullname:@"Disk I/O Total Bytes Written" align:NSTextAlignmentRight width:70 tag:28 style:ColumnStyleSortDesc | ColumnStyleColor
+			descr:@"自进程启动以来从磁盘读取的字节数。"],
+		[PSColumn psColumnWithName:@"\u03A3DiskW" fullname:@"磁盘写入总字节数" align:NSTextAlignmentRight width:70 tag:28 style:ColumnStyleSortDesc | ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return !proc->rusage.ri_diskio_byteswritten ? @"-" :
 				[NSByteCountFormatter stringFromByteCount:proc->rusage.ri_diskio_byteswritten countStyle:NSByteCountFormatterCountStyleMemory]; }
 			floatData:^double(PSProc *proc) { return proc->rusage.ri_diskio_byteswritten; }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(rusage.ri_diskio_byteswritten); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(rusage.ri_diskio_byteswritten); }
-			descr:@"Bytes written to disk since process launch."],
-		[PSColumn psColumnWithName:@"\u03A3Time" fullname:@"Total Process Running Time" align:NSTextAlignmentRight width:75 tag:29 style:ColumnStyleColor
+			descr:@"自进程启动以来写入磁盘的字节数。"],
+		[PSColumn psColumnWithName:@"\u03A3Time" fullname:@"进程运行总时间" align:NSTextAlignmentRight width:75 tag:29 style:ColumnStyleColor
 			data:^NSString*(PSProc *proc) { return psProcessUptime(proc->rusage.ri_proc_start_abstime, proc->rusage.ri_proc_exit_abstime); }
 			sort:^NSComparisonResult(PSProc *a, PSProc *b) { COMPARE_VAR(rusage.ri_proc_start_abstime); } summary:nil
 			color:^UIColor*(PSProc *proc) { DIFF_VAR(rusage.ri_proc_start_abstime); }
-			descr:@"Time elapsed since process launch."],
+			descr:@"自进程启动以来经过的时间。"],
