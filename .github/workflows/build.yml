@@ -1,39 +1,40 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - "l10n/**"
+  workflow_dispatch:
 
 jobs:
   build:
-
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    
+    - uses: actions/checkout@v4
+
     - name: prepare environment
       run: |
         brew install ldid make
-        echo "THEOS=/Users/runner/work/CocoaTop/CocoaTop/theos" >> $GITHUB_ENV
-        echo "PATH=/usr/local/opt/make/libexec/gnubin:$PATH" >> $GITHUB_ENV
-        
-    
+        echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
+        echo "PATH=$(brew --prefix make)/libexec/gnubin:$PATH" >> $GITHUB_ENV
+
     - name: verify updated cache
       id: verify-cache
       run: |
-        echo "::set-output name=heads::`git ls-remote https://github.com/theos/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/xybp888/iOS-SDKs | head -n 1 | cut -f 1`"
+        echo "heads=$(git ls-remote https://github.com/theos/theos | head -n 1 | cut -f 1)-$(git ls-remote https://github.com/xybp888/iOS-SDKs | head -n 1 | cut -f 1)" >> $GITHUB_OUTPUT
 
     - name: use cache
       id: cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
-        path: /Users/runner/work/CocoaTop/CocoaTop/theos
+        path: ${{ github.workspace }}/theos
         key: ${{ runner.os }}-${{ steps.verify-cache.outputs.heads }}
 
     - name: get theos
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: recursive
         path: 'theos'
@@ -45,21 +46,24 @@ jobs:
         curl -LO https://github.com/xybp888/iOS-SDKs/archive/master.zip
         TMP=$(mktemp -d)
         unzip -q master.zip -d $TMP
-        if [ ! -d "/Users/runner/work/CocoaTop/CocoaTop/theos/sdks" ]; then
-          mkdir /Users/runner/work/CocoaTop/CocoaTop/theos/sdks
-        fi
-        mv $TMP/iOS-SDKs-master/*.sdk /Users/runner/work/CocoaTop/CocoaTop/theos/sdks
+        mkdir -p "${{ github.workspace }}/theos/sdks"
+        mv $TMP/iOS-SDKs-master/*.sdk "${{ github.workspace }}/theos/sdks"
         rm -r master.zip $TMP
 
     - name: actual build
       run: |
-        cd src
         mkdir -p packages
         rm -f packages/*
-        make package FINALPACKAGE=1
+        make ipa FINALPACKAGE=1
 
     - name: upload deb
-      uses: actions/upload-artifact@v2.2.0
+      uses: actions/upload-artifact@v4
       with:
-        name: 'Package'
-        path: ${{ github.workspace }}/src/packages/*.deb
+        name: 'Package-deb'
+        path: ${{ github.workspace }}/packages/*.deb
+
+    - name: upload tipa
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'Package-tipa'
+        path: ${{ github.workspace }}/packages/*.tipa
