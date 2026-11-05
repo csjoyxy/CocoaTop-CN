@@ -88,11 +88,11 @@
 
 	if (helperFailed) {
 		dispatch_async(dispatch_get_main_queue(), ^{
-			NSString *message = error.localizedDescription ?: @"CocoaTop cannot continue without its helper.";
-			UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Helper failed to open"
+			NSString *message = error.localizedDescription ?: @"CocoaTop 没有 Helper 无法继续运行。";
+			UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Helper 打开失败"
 				message:message
 				preferredStyle:UIAlertControllerStyleAlert];
-			[alert addAction:[UIAlertAction actionWithTitle:@"OK"
+			[alert addAction:[UIAlertAction actionWithTitle:@"确定"
 				style:UIAlertActionStyleDefault
 				handler:^(__unused UIAlertAction *action) {
 					[[UIApplication sharedApplication] performSelector:@selector(suspend)];

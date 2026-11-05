@@ -5,7 +5,7 @@
 #import "Sock.h"
 #import "RootHelperManager.h"
 
-NSString *ColumnModeName[ColumnModes] = {@"Summary", @"Threads", @"Open files", @"Open ports", @"Modules"};
+NSString *ColumnModeName[ColumnModes] = {@"概览", @"线程", @"打开的文件", @"打开的端口", @"模块"};
 
 @implementation SockViewController
 {
@@ -83,10 +83,10 @@ NSString *ColumnModeName[ColumnModes] = {@"Summary", @"Threads", @"Open files", 
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	//self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back"
+	//self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"返回"
 	//	style: UIBarButtonItemStyleDone target:self action:@selector(backWithoutAnimation)];
 
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back"
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"返回"
         style: UIBarButtonItemStyleDone target:self action:@selector(backWithoutAnimation)];
 	viewMode = [CocoaTopUserDefaults() integerForKey:@"ProcInfoMode"];
 	NSMutableArray *modeItems = [NSMutableArray arrayWithObjects:ColumnModeName count:ColumnModes];
@@ -365,7 +365,7 @@ NSString *ColumnModeName[ColumnModes] = {@"Summary", @"Threads", @"Open files", 
 					  (viewMode == ColumnModeModules) ? sock.name : sock.description;
 	if (viewMode == ColumnModePorts)
 		message = [[message stringByReplacingOccurrencesOfString:@" <" withString:@"\n<"] stringByReplacingOccurrencesOfString:@" >" withString:@"\n>"];
-	[[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+	[[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil] show];
 }
 
 #pragma mark -

@@ -7,68 +7,64 @@
 		<title></title>
 	</head>
 	<body>
-		<h1>Quick Guide</h1>
+		<h1>快速指南</h1>
 		<panel>
 		<fieldset>
         <ul>
-            <li>Tap on a process to view its details, including threads, open files &amp; sockets, loaded modules, and summary.</li>
-            <li>Tap on a column header to sort by that column. Tap again to sort backwards.</li>
-            <li>Switch to fullscreen view and back by touching the display with two fingers.</li>
-            <li>Processes on a green background were recently created.</li>
-            <li>Processes on a red background have recently terminated.</li>
-            <li>To terminate (TERM) or kill a process (<font color=red>KILL</font>) swipe to the left. A SIGTERM signal gives the process an option 
-			to terminate voluntarily. A SIGKILL kills the process immediately, that's why it's a red button.</li>
-            <li>Numeric values are highlighted <font color=red>red</font> when they increase, and <font color=blue>blue</font> when they decrease.</li>
-            <li>Descriptions for all columns and their totals (the values at the bottom) are available in the column configuration 
-			pane &ndash; just tap the (i) icon.</li>
+            <li>轻点进程可查看其详情，包括线程、打开的文件与套接字、已加载的模块以及概览。</li>
+            <li>轻点列标题可按该列排序。再次轻点可反向排序。</li>
+            <li>双指轻触屏幕可在全屏和普通视图之间切换。</li>
+            <li>绿色背景的进程为最近新建的进程。</li>
+            <li>红色背景的进程为最近终止的进程。</li>
+            <li>向左滑动可终止进程 (TERM) 或强行终止进程 (<font color=red>KILL</font>)。SIGTERM 信号允许进程自愿终止；SIGKILL 信号会立即杀死进程，这也是它显示为红色按钮的原因。</li>
+            <li>数值增大时高亮显示为<font color=red>红色</font>，减小时高亮显示为<font color=blue>蓝色</font>。</li>
+            <li>列配置面板中提供了所有列及其总计（底部数值）的描述 &ndash; 只需轻点 (i) 图标即可。</li>
         </ul>
 		</fieldset>
 		</panel>
-		<h1>Process Details: Threads</h1>
+		<h1>进程详情：线程</h1>
 		<panel>
 		<fieldset>
-		<p>Threads are displayed with the following color coding:<br>
-		<font color=red>&#x25A0;</font> - a thread is currently running.<br>
-		<font color=orange>&#x25A0;</font> - a thread is waiting on I/O in a system call (uninterruptible).<br>
-		<font color=brown>&#x25A0;</font> - a thread is halted or stopped.<br>
-		<font color=blue>&#x25A0;</font> - a thread is suspended.<br>
-		<font color=black>&#x25A0;</font> - a thread is idle (sleeping).<br>
-		<font color=darkgray>&#x25A0;</font> - thread state is unknown.
+		<p>线程按以下颜色编码显示：<br>
+		<font color=red>&#x25A0;</font> - 线程当前正在运行。<br>
+		<font color=orange>&#x25A0;</font> - 线程正在系统调用中等待 I/O（不可中断）。<br>
+		<font color=brown>&#x25A0;</font> - 线程已暂停或停止。<br>
+		<font color=blue>&#x25A0;</font> - 线程已被挂起。<br>
+		<font color=black>&#x25A0;</font> - 线程处于空闲状态（休眠）。<br>
+		<font color=darkgray>&#x25A0;</font> - 线程状态未知。
 		</p>
-		<p>A small 'i' in thread state column indicates that the thread is running an idle loop (used for putting a CPU core into 
-		sleep mode). Such threads can be seen in the kernel task.</p>
+		<p>线程状态列中的小写字母“i”表示该线程正在运行空闲循环（用于使 CPU 核心进入休眠模式）。此类线程可在 kernel task 中看到。</p>
 		</fieldset>
 		</panel>
-		<h1>Process Details: Open Files &amp; Sockets</h1>
+		<h1>进程详情：打开的文件与套接字</h1>
 		<panel>
 		<fieldset>
-		<p>Open file descriptors are displayed with the following color coding:<br>
-		<font color=black>&#x25A0;</font> - this is a regular file.<br>
-		<font color=green>&#x25A0;</font> - this is a network socket (TCP or UDP).<br>
-		<font color=blue>&#x25A0;</font> - this is a UNIX pipe.<br>
-		<font color=brown>&#x25A0;</font> - this is a UNIX socket or a kernel queue.<br>
-		<font color=orange>&#x25A0;</font> - this is a kernel control descriptor.<br>
-		<font color=red>&#x25A0;</font> - this is a kernel event descriptor.
-		</p>
-		</fieldset>
-		</panel>
-		<h1>Process Details: Mach Ports</h1>
-		<panel>
-		<fieldset>
-		<p>Open ports are displayed with the following color coding:<br>
-		<font color=green>&#x25A0;</font> - this port has SEND and RECEIVE rights.<br>
-		<font color=blue>&#x25A0;</font> - this port has a RECEIVE right.<br>
-		<font color=black>&#x25A0;</font> - this port has a SEND right.<br>
+		<p>打开的文件描述符按以下颜色编码显示：<br>
+		<font color=black>&#x25A0;</font> - 普通文件。<br>
+		<font color=green>&#x25A0;</font> - 网络套接字（TCP 或 UDP）。<br>
+		<font color=blue>&#x25A0;</font> - UNIX 管道。<br>
+		<font color=brown>&#x25A0;</font> - UNIX 套接字或内核队列。<br>
+		<font color=orange>&#x25A0;</font> - 内核控制描述符。<br>
+		<font color=red>&#x25A0;</font> - 内核事件描述符。
 		</p>
 		</fieldset>
 		</panel>
-		<h1>Process Details: Loaded Modules</h1>
+		<h1>进程详情：Mach 端口</h1>
 		<panel>
 		<fieldset>
-		<p>Loaded modules are displayed with the following color coding:<br>
-		<font color=black>&#x25A0;</font> - this module is loaded from a .dylib file. Mapped size and reference count are provided.<br>
-		<font color=darkgray>&#x25A0;</font> - this module is loaded from the dynamic library cache &ndash; a large file 
-		where all built-in system libraries (private and public) are combined to improve performance.
+		<p>打开的端口按以下颜色编码显示：<br>
+		<font color=green>&#x25A0;</font> - 该端口拥有发送和接收权限。<br>
+		<font color=blue>&#x25A0;</font> - 该端口拥有接收权限。<br>
+		<font color=black>&#x25A0;</font> - 该端口拥有发送权限。<br>
+		</p>
+		</fieldset>
+		</panel>
+		<h1>进程详情：已加载模块</h1>
+		<panel>
+		<fieldset>
+		<p>已加载的模块按以下颜色编码显示：<br>
+		<font color=black>&#x25A0;</font> - 该模块从 .dylib 文件加载。提供映射大小和引用计数。<br>
+		<font color=darkgray>&#x25A0;</font> - 该模块从动态库缓存加载 &ndash; 这是一个将所有内置系统库（私有和公开）合并在一起以提高性能的大文件。
 		</p>
 		</fieldset>
 		</panel>

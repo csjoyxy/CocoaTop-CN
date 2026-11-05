@@ -86,16 +86,16 @@ NSString *psPortRightsString(uint32_t rights)
 NSString *psTaskRoleString(PSProc *proc)
 {
 	switch (proc.role) {
-	case TASK_RENICED:					return @"Reniced";
+	case TASK_RENICED:					return @"已调整优先级";
 	case TASK_UNSPECIFIED:				return @"-";
-	case TASK_FOREGROUND_APPLICATION:	return @"Foreground";
-	case TASK_BACKGROUND_APPLICATION:	return @"Background";
-	case TASK_CONTROL_APPLICATION:		return @"Controller";
+	case TASK_FOREGROUND_APPLICATION:	return @"前台";
+	case TASK_BACKGROUND_APPLICATION:	return @"后台";
+	case TASK_CONTROL_APPLICATION:		return @"控制器";
 	case TASK_GRAPHICS_SERVER:			return @"GfxServer";
-	case TASK_THROTTLE_APPLICATION:		return @"Throttle";
-	case TASK_NONUI_APPLICATION:		return @"Inactive";
-	case TASK_DEFAULT_APPLICATION:		return @"Default";
-	default:							return @"Unknown";
+	case TASK_THROTTLE_APPLICATION:		return @"节流";
+	case TASK_NONUI_APPLICATION:		return @"未活跃";
+	case TASK_DEFAULT_APPLICATION:		return @"默认";
+	default:							return @"未知";
 	}
 }
 
@@ -225,72 +225,72 @@ NSString *psProcessCpuTime(unsigned int ptime)
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		sockColumns[ColumnModeSummary] = @[
-		[PSColumn psColumnWithName:@"Column" fullname:@"Information Column" align:NSTextAlignmentLeft width:180 tag:1000 style:ColumnStyleEllipsis
+		[PSColumn psColumnWithName:@"列" fullname:@"信息列" align:NSTextAlignmentLeft width:180 tag:1000 style:ColumnStyleEllipsis
 			data:^NSString*(PSSockSummary *sock) { return sock.name; }
 			sort:^NSComparisonResult(PSSock *a, PSSock *b) { return [a.name caseInsensitiveCompare:b.name]; } summary:nil],
-		[PSColumn psColumnWithName:@"Value" fullname:@"Column Value" align:NSTextAlignmentLeft width:140 tag:1001 style:ColumnStyleExtend | ColumnStyleEllipsis
+		[PSColumn psColumnWithName:@"取值" fullname:@"列取值" align:NSTextAlignmentLeft width:140 tag:1001 style:ColumnStyleExtend | ColumnStyleEllipsis
 			data:^NSString*(PSSockSummary *sock) { return sock.col.getData(sock.proc); }
 			sort:^NSComparisonResult(PSSock *a, PSSock *b) { return 0; } summary:nil],
 		];
 		sockColumns[ColumnModeThreads] = @[
-		[PSColumn psColumnWithName:@"TID" fullname:@"Thread ID" align:NSTextAlignmentRight width:53 tag:2000 style:0
+		[PSColumn psColumnWithName:@"TID" fullname:@"线程 ID" align:NSTextAlignmentRight width:53 tag:2000 style:0
 			data:^NSString*(PSSockThreads *sock) { return [NSString stringWithFormat:@"%llX", sock.tid]; }
 			sort:^NSComparisonResult(PSSockThreads *a, PSSockThreads *b) { COMPARE(tid); } summary:nil],
-		[PSColumn psColumnWithName:@"%" fullname:@"%CPU Usage" align:NSTextAlignmentRight width:42 tag:2001 style:ColumnStyleSortDesc
+		[PSColumn psColumnWithName:@"%" fullname:@"%CPU 使用率" align:NSTextAlignmentRight width:42 tag:2001 style:ColumnStyleSortDesc
 			data:^NSString*(PSSockThreads *sock) { return !sock->tbi.cpu_usage ? @"-" : [NSString stringWithFormat:@"%.1f", (float)sock->tbi.cpu_usage / 10]; }
 			sort:^NSComparisonResult(PSSockThreads *a, PSSockThreads *b) { COMPARE_VAR(tbi.cpu_usage); } summary:nil],
-		[PSColumn psColumnWithName:@"Time" fullname:@"Thread Time" align:NSTextAlignmentRight width:60 tag:2002 style:ColumnStyleSortDesc | ColumnStyleLowSpace
+		[PSColumn psColumnWithName:@"时间" fullname:@"线程时间" align:NSTextAlignmentRight width:60 tag:2002 style:ColumnStyleSortDesc | ColumnStyleLowSpace
 			data:^NSString*(PSSockThreads *sock) { return psProcessCpuTime(sock.ptime); }
 			sort:^NSComparisonResult(PSSockThreads *a, PSSockThreads *b) { COMPARE(ptime); } summary:nil],
 		[PSColumn psColumnWithName:@"S" fullname:@"Mach Thread State" align:NSTextAlignmentLeft width:33 tag:2003 style:ColumnStyleLowSpace
 			data:^NSString*(PSSockThreads *sock) { return psThreadStateString(sock); }
 			sort:^NSComparisonResult(PSSockThreads *a, PSSockThreads *b) { COMPARE_VAR(tbi.run_state); } summary:nil],
-		[PSColumn psColumnWithName:@"Pri" fullname:@"Thread Priority" align:NSTextAlignmentRight width:37 tag:2004 style:ColumnStyleSortDesc | ColumnStyleLowSpace
+		[PSColumn psColumnWithName:@"Pri" fullname:@"线程优先级" align:NSTextAlignmentRight width:37 tag:2004 style:ColumnStyleSortDesc | ColumnStyleLowSpace
 			data:^NSString*(PSSockThreads *sock) { return [NSString stringWithFormat:@"%@%u", sock->tbi.policy == POLICY_RR ? @"R:" : sock->tbi.policy == POLICY_FIFO ? @"F:" : @"", sock.prio]; }
 			sort:^NSComparisonResult(PSSockThreads *a, PSSockThreads *b) { COMPARE(prio); } summary:nil],
-		[PSColumn psColumnWithName:@"Name" fullname:@"Thread Name" align:NSTextAlignmentLeft width:95 tag:2005 style:ColumnStyleExtend | ColumnStyleEllipsis
+		[PSColumn psColumnWithName:@"名称" fullname:@"线程名称" align:NSTextAlignmentLeft width:95 tag:2005 style:ColumnStyleExtend | ColumnStyleEllipsis
 			data:^NSString*(PSSockThreads *sock) { return sock.name; }
 			sort:^NSComparisonResult(PSSockThreads *a, PSSockThreads *b) { return [a.name caseInsensitiveCompare:b.name]; } summary:nil],
 		];
 		sockColumns[ColumnModeFiles] = @[
-		[PSColumn psColumnWithName:@"FD" fullname:@"File Descriptor" align:NSTextAlignmentRight width:40 tag:3000 style:0
+		[PSColumn psColumnWithName:@"FD" fullname:@"文件描述符" align:NSTextAlignmentRight width:40 tag:3000 style:0
 			data:^NSString*(PSSockFiles *sock) { return [NSString stringWithFormat:@"%d", sock.fd]; }
 			sort:^NSComparisonResult(PSSockFiles *a, PSSockFiles *b) { COMPARE(fd); } summary:nil],
-		[PSColumn psColumnWithName:@"Open file/socket" fullname:@"Filename or Socket Address" align:NSTextAlignmentLeft width:220 tag:3001 style:ColumnStylePathTrunc
+		[PSColumn psColumnWithName:@"打开的文件/套接字" fullname:@"文件名或套接字地址" align:NSTextAlignmentLeft width:220 tag:3001 style:ColumnStylePathTrunc
 			data:^NSString*(PSSockFiles *sock) { return sock.name; }
 			sort:^NSComparisonResult(PSSockFiles *a, PSSockFiles *b) { return [a.name caseInsensitiveCompare:b.name]; } summary:nil],
-		[PSColumn psColumnWithName:@"Type" fullname:@"Descriptor Type" align:NSTextAlignmentLeft width:50 tag:3002 style:ColumnStyleLowSpace
+		[PSColumn psColumnWithName:@"类型" fullname:@"描述符类型" align:NSTextAlignmentLeft width:50 tag:3002 style:ColumnStyleLowSpace
 			data:^NSString*(PSSockFiles *sock) { return [NSString stringWithUTF8String:sock.stype]; }
 			sort:^NSComparisonResult(PSSockFiles *a, PSSockFiles *b) { int res = strcmp(a.stype, b.stype); return COMPARE_ORDER(res, 0); } summary:nil],
-		[PSColumn psColumnWithName:@"F" fullname:@"Open Flags" align:NSTextAlignmentLeft width:40 tag:3003 style:ColumnStyleLowSpace
+		[PSColumn psColumnWithName:@"F" fullname:@"打开标志" align:NSTextAlignmentLeft width:40 tag:3003 style:ColumnStyleLowSpace
 			data:^NSString*(PSSockFiles *sock) { return psFdFlagsString(sock.flags); }
 			sort:^NSComparisonResult(PSSockFiles *a, PSSockFiles *b) { COMPARE(flags); } summary:nil],
 		];
 		sockColumns[ColumnModePorts] = @[
-		[PSColumn psColumnWithName:@"Name" fullname:@"Port Name" align:NSTextAlignmentRight width:53 tag:5000 style:0
+		[PSColumn psColumnWithName:@"名称" fullname:@"端口名称" align:NSTextAlignmentRight width:53 tag:5000 style:0
 			data:^NSString*(PSSockPorts *sock) { return [NSString stringWithFormat:@"%X", sock.port]; }
 			sort:^NSComparisonResult(PSSockPorts *a, PSSockPorts *b) { COMPARE(port); } summary:nil],
-		[PSColumn psColumnWithName:@"Connection" fullname:@"Port Connection" align:NSTextAlignmentLeft width:220 tag:5002 style:ColumnStylePathTrunc
+		[PSColumn psColumnWithName:@"连接" fullname:@"端口连接" align:NSTextAlignmentLeft width:220 tag:5002 style:ColumnStylePathTrunc
 			data:^NSString*(PSSockPorts *sock) { return sock.description; }
 			sort:^NSComparisonResult(PSSockPorts *a, PSSockPorts *b) { return [a.description caseInsensitiveCompare:b.description]; } summary:nil],
-		[PSColumn psColumnWithName:@"R" fullname:@"Rights" align:NSTextAlignmentLeft width:30 tag:5003 style:0
+		[PSColumn psColumnWithName:@"R" fullname:@"权限" align:NSTextAlignmentLeft width:30 tag:5003 style:0
 			data:^NSString*(PSSockPorts *sock) { return psPortRightsString(sock.type); }
 			sort:^NSComparisonResult(PSSockPorts *a, PSSockPorts *b) { COMPARE(type & MACH_PORT_TYPE_ALL_RIGHTS); } summary:nil],
 		];
 		sockColumns[ColumnModeModules] = @[
-		[PSColumn psColumnWithName:@"Mapped module" fullname:@"Module Filename" align:NSTextAlignmentLeft width:220 tag:4000 style:ColumnStylePathTrunc | ColumnStyleTooLong
+		[PSColumn psColumnWithName:@"映射模块" fullname:@"模块文件名" align:NSTextAlignmentLeft width:220 tag:4000 style:ColumnStylePathTrunc | ColumnStyleTooLong
 			data:^NSString*(PSSockModules *sock) { return sock.name; }
 			sort:^NSComparisonResult(PSSockModules *a, PSSockModules *b) { return [a.bundle caseInsensitiveCompare:b.bundle]; } summary:nil],
-		[PSColumn psColumnWithName:@"Address" fullname:@"Loaded Virtual Address" align:NSTextAlignmentRight width:90 tag:4001 style:ColumnStyleMonoFont | ColumnStyleLowSpace
+		[PSColumn psColumnWithName:@"地址" fullname:@"加载虚拟地址" align:NSTextAlignmentRight width:90 tag:4001 style:ColumnStyleMonoFont | ColumnStyleLowSpace
 			data:^NSString*(PSSockModules *sock) { return [NSString stringWithFormat:@"%llX", sock.addr]; }
 			sort:^NSComparisonResult(PSSockModules *a, PSSockModules *b) { COMPARE(addr); } summary:nil],
-		[PSColumn psColumnWithName:@"Size" fullname:@"Mapped size" align:NSTextAlignmentRight width:60 tag:4002 style:ColumnStyleSortDesc
+		[PSColumn psColumnWithName:@"大小" fullname:@"映射大小" align:NSTextAlignmentRight width:60 tag:4002 style:ColumnStyleSortDesc
 			data:^NSString*(PSSockModules *sock) { return !sock.size ? @"-" : [NSByteCountFormatter stringFromByteCount:sock.size countStyle:NSByteCountFormatterCountStyleMemory]; }
 			sort:^NSComparisonResult(PSSockModules *a, PSSockModules *b) { COMPARE(size); } summary:nil],
 //		[PSColumn psColumnWithName:@"iNode" fullname:@"Device and iNode of Module on Disk" align:NSTextAlignmentLeft width:80 tag:4003 style:0
 //			data:^NSString*(PSSockModules *sock) { return sock.dev || sock.ino ? [NSString stringWithFormat:@"%u,%u %u", sock.dev >> 24, sock.dev & ((1<<24)-1), sock.ino] : @"  cache"; }
 //			sort:^NSComparisonResult(PSSockModules *a, PSSockModules *b) { return a.dev == b.dev ? a.ino - b.ino : a.dev - b.dev; } summary:nil],
-		[PSColumn psColumnWithName:@"Ref" fullname:@"Reference count" align:NSTextAlignmentRight width:40 tag:4004 style:ColumnStyleSortDesc | ColumnStyleLowSpace
+		[PSColumn psColumnWithName:@"引用" fullname:@"引用计数" align:NSTextAlignmentRight width:40 tag:4004 style:ColumnStyleSortDesc | ColumnStyleLowSpace
 			data:^NSString*(PSSockModules *sock) { return [NSString stringWithFormat:@"%d", sock.ref]; }
 			sort:^NSComparisonResult(PSSockModules *a, PSSockModules *b) { COMPARE(ref); } summary:nil],
 		];

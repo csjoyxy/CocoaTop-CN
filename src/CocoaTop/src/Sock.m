@@ -411,7 +411,7 @@ static const void *psFDRecordInfo(const struct CocoaTopFDSnapshot *snapshot,
 											else stype = (info.psi.soi_kind == SOCKINFO_TCP) ? "TCP" : "UDP";
 			if (lsp) name = [NSMutableString stringWithFormat:@"%s:%s \u2192 ", lip, lsp->s_name];
 				else name = [NSMutableString stringWithFormat:@"%s:%d \u2192 ", lip, ntohs(s->insi_lport)];
-			if (!s->insi_fport) [name appendString:@"Listening"]; else
+			if (!s->insi_fport) [name appendString:@"监听中"]; else
 			if (fsp) [name appendFormat:@"%s:%s", fip, fsp->s_name];
 				else [name appendFormat:@"%s:%d", fip, ntohs(s->insi_fport)];
                 

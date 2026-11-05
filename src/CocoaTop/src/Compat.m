@@ -45,7 +45,7 @@ NSUserDefaults *CocoaTopUserDefaults(void)
 + (NSString *)stringFromByteCount:(long long)byteCount countStyle:(int)countStyle
 {
 	if (byteCount < 1024)
-		return [NSString stringWithFormat:@"%lld bytes", byteCount];
+		return [NSString stringWithFormat:@"%lld 字节", byteCount];
 	else if (byteCount < 1024 * 1024)
 		return [NSString stringWithFormat:@"%.1f KB", (float)byteCount / 1024];
 	else if (byteCount < 1024 * 1024 * 1024)
